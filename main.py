@@ -12,7 +12,7 @@ class App(CTk):
         self.title("Chord Canvas")
         self.geometry(f"{960}x{624}")
 
-        # self.resizable(False, False)
+        self.resizable(False, False)
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
         self.FONT = CTkFont("./assets/Inter.ttf", size=14)
@@ -153,9 +153,9 @@ class App(CTk):
             self.center_frame, width=608, height=48, fg_color="#ECECED"
         )
         self.playback_frame.grid(
-            row=3, column=0, rowspan=3, padx=14, pady=16, sticky="ew"
+            row=3, column=0, rowspan=4, padx=14, pady=16, sticky="ew"
         )
-        self.playback_frame.grid_columnconfigure(3, weight=1)
+        self.playback_frame.grid_columnconfigure(4, weight=1)
         self.play_button = CTkButton(
             self.playback_frame,
             width=32,
@@ -184,11 +184,12 @@ class App(CTk):
         )
         self.stop_button.grid(row=0, column=2, padx=8, pady=8)
         self.instrument_menu = CTkOptionMenu(self.playback_frame, width=120, height=32, values=["Piano", "Guitar", "8bit"])
+        self.instrument_menu.grid(row=0, column=3, padx=8, pady=8)
 
         self.tempo_menu = CTkButton(
-            self.playback_frame, text=f"{tempo}bpm", width=80, height=32
+            self.playback_frame, text=f"{120}bpm", width=80, height=32
         )
-        self.tempo_menu.grid(row=0, column=4, padx=8, pady=8)
+        self.tempo_menu.grid(row=0, column=5, padx=8, pady=8)
         self.ts_menu = CTkOptionMenu(
             self.playback_frame,
             values=[
@@ -209,70 +210,8 @@ class App(CTk):
             width=80,
             height=32,
         )
-        self.ts_menu.grid(row=0, column=5, padx=8, pady=8)
+        self.ts_menu.grid(row=0, column=6, padx=8, pady=8)
 
-        # Set default values
-        self.ts_menu.set(time_signature)
-
-class CKey:
-    def __init__(self, tonic, mode):
-        scale_key = {
-            "Major": scale.MajorScale,
-            "Minor": scale.MinorScale,
-            "Dorian": scale.DorianScale,
-            "Phrygian": scale.PhrygianScale,
-            "Lydian": scale.LydianScale,
-            "Mixolydian": scale.MixolydianScale,
-            "Locrian": scale.LocrianScale,
-        }
-
-        self.tonic = tonic
-        self.mode = mode
-        self.chords = []
-    
-    def update(self):
-        self.key = key.Key(self.tonic, self.mode)
-        self.scale = self.key.getScale()
-        self.relative = self.key.relative
-        self.chords = []
-
-    def create_chords(self, num):
-        numerals = [
-            "i",
-            "ii",
-            "iii",
-            "iv",
-            "v",
-            "vi",
-            "vii",
-            "viii",
-        ]
-
-        self.chords.clear()
-        for column in range(4):
-            for row in range(7):
-                new_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}", self.key, caseMatters=False))
-
-                # if new_chord.notes not in self.scale.pitches:
-                #     pass
-                # else:
-                self.chords.append(new_chord)
-        
-
-def mainloop():
-    current_key.tonic = app.tonic_menu.get()
-    current_key.mode = app.mode_menu.get()
-    current_key.update()
-    time_signature = app.ts_menu.get()
-    tempo = 120
-    print(f"{current_key.relative} || {time_signature} || {tempo}")
-    print(current_key.chords)
-    app.after(100, mainloop)
-
-current_key = CKey("C", "Major")
-time_signature = "4/4"
-tempo = 120
 
 app = App()
-app.after(100, mainloop)
 app.mainloop()
