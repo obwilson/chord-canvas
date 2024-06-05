@@ -5,6 +5,86 @@ from music21 import *
 set_appearance_mode("System")
 set_default_color_theme("./assets/theme.json")
 
+class ProjectManager():
+    def __init__(self, FONT, palette_menu_bar, playback_frame):
+        self.tonic_menu = CTkOptionMenu(
+            palette_menu_bar,
+            width=64,
+            height=32,
+            font=FONT,
+            values=[
+                "C",
+                "C#",
+                "Db",
+                "D",
+                "D#",
+                "Eb",
+                "E",
+                "F",
+                "F#",
+                "Gb",
+                "G",
+                "G#",
+                "Ab",
+                "A",
+                "A#",
+                "Bb",
+                "B",
+            ],
+        )
+        self.mode_menu = CTkOptionMenu(
+            palette_menu_bar,
+            width=144,
+            height=32,
+            font=FONT,
+            values=[
+                "Major",
+                "Minor",
+                "Dorian",
+                "Phrygian",
+                "Lydian",
+                "Mixolydian",
+                "Locrian",
+            ],
+        )
+        self.ts_menu = CTkOptionMenu(
+            playback_frame,
+            values=[
+                "2/2",
+                "4/2",
+                "2/4",
+                "3/4",
+                "4/4",
+                "5/4",
+                "7/4",
+                "3/8",
+                "5/8",
+                "6/8",
+                "7/8",
+                "9/8",
+                "12/8",
+            ],
+            width=80,
+            height=32,
+        )
+        self.instrument_menu = CTkOptionMenu(playback_frame, width=120, height=32, values=["Piano", "Guitar", "8bit"])
+        self.tempo_menu = CTkButton(playback_frame, text=f"{120}bpm", width=80, height=32)
+
+    def get_tonic(self):
+        return self.tonic_menu.get()
+    
+    def get_mode(self):
+        return self.mode_menu.get()
+    
+    def get_time_signature(self):
+        return self.ts_menu.get()
+    
+    def get_tempo(self):
+        return self.tempo_menu.get()
+    
+    def get_instrument(self):
+        return self.instrument_menu.get()
+
 class App(CTk):
     def __init__(self):
         super().__init__()
@@ -89,48 +169,6 @@ class App(CTk):
             self.tabs.tab("Palette"), width=552, height=40, fg_color="#ECECED"
         )
         self.palette_frame.grid(row=1, column=0, padx=8)
-        self.tonic_menu = CTkOptionMenu(
-            self.palette_menu_bar,
-            width=64,
-            height=32,
-            font=self.FONT,
-            values=[
-                "C",
-                "C#",
-                "Db",
-                "D",
-                "D#",
-                "Eb",
-                "E",
-                "F",
-                "F#",
-                "Gb",
-                "G",
-                "G#",
-                "Ab",
-                "A",
-                "A#",
-                "Bb",
-                "B",
-            ],
-        )
-        self.tonic_menu.grid(row=0, column=0, padx=(0, 8))
-        self.mode_menu = CTkOptionMenu(
-            self.palette_menu_bar,
-            width=144,
-            height=32,
-            font=self.FONT,
-            values=[
-                "Major",
-                "Minor",
-                "Dorian",
-                "Phrygian",
-                "Lydian",
-                "Mixolydian",
-                "Locrian",
-            ],
-        )
-        self.mode_menu.grid(row=0, column=1, padx=8)
         self.modulate_button = CTkButton(
             self.palette_menu_bar, width=144, height=32, text="Change Key"
         )
@@ -183,35 +221,34 @@ class App(CTk):
             border_spacing=8,
         )
         self.stop_button.grid(row=0, column=2, padx=8, pady=8)
-        self.instrument_menu = CTkOptionMenu(self.playback_frame, width=120, height=32, values=["Piano", "Guitar", "8bit"])
-        self.instrument_menu.grid(row=0, column=3, padx=8, pady=8)
 
-        self.tempo_menu = CTkButton(
-            self.playback_frame, text=f"{120}bpm", width=80, height=32
-        )
-        self.tempo_menu.grid(row=0, column=5, padx=8, pady=8)
-        self.ts_menu = CTkOptionMenu(
-            self.playback_frame,
-            values=[
-                "2/2",
-                "4/2",
-                "2/4",
-                "3/4",
-                "4/4",
-                "5/4",
-                "7/4",
-                "3/8",
-                "5/8",
-                "6/8",
-                "7/8",
-                "9/8",
-                "12/8",
-            ],
-            width=80,
-            height=32,
-        )
-        self.ts_menu.grid(row=0, column=6, padx=8, pady=8)
+        self.manager = ProjectManager(self.FONT, self.palette_menu_bar, self.playback_frame)
 
+        self.manager.tonic_menu.grid(row=0, column=0, padx=(0, 8))
+        self.manager.mode_menu.grid(row=0, column=1, padx=8)
+        self.manager.instrument_menu.grid(row=0, column=3, padx=8, pady=8)
+        self.manager.tempo_menu.grid(row=0, column=5, padx=8, pady=8)
+        self.manager.ts_menu.grid(row=0, column=6, padx=8, pady=8)
+
+    def loop(self):
+        print(app.manager.get_tonic())
+        print(app.manager.get_mode())
+        self.after(10, self.loop)
+
+class CanvasKey:
+    def __init__(self, tonic, mode):
+        scale_key = {
+            "Major": scale.MajorScale,
+            "Minor": scale.MinorScale,
+            "Dorian": scale.DorianScale,
+            "Phrygian": scale.PhrygianScale,
+            "Lydian": scale.LydianScale,
+            "Mixolydian": scale.MixolydianScale,
+            "Locrian": scale.LocrianScale,
+        }
+
+        self.scale = scale_key[mode](pitch.Pitch(tonic))
 
 app = App()
+app.loop()
 app.mainloop()
