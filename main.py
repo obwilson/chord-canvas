@@ -1,9 +1,17 @@
 from customtkinter import *
 from PIL import Image
 from music21 import *
+from pychord import Chord
+import numpy
 
 set_appearance_mode("System")
 set_default_color_theme("./assets/theme.json")
+
+DEFAULT_TONIC = "C"
+DEFAULT_MODE = "Major"
+DEFAULT_INSTRUMENT = "Piano"
+DEFAULT_TEMPO = 120
+DEFAULT_TIME_SIGNATURE = "4/4"
 
 class ProjectManager():
     def __init__(self, FONT, palette_menu_bar, playback_frame):
@@ -47,7 +55,7 @@ class ProjectManager():
                 "Locrian",
             ],
         )
-        self.ts_menu = CTkOptionMenu(
+        self.time_signature_menu = CTkOptionMenu(
             playback_frame,
             values=[
                 "2/2",
@@ -70,6 +78,13 @@ class ProjectManager():
         self.instrument_menu = CTkOptionMenu(playback_frame, width=120, height=32, values=["Piano", "Guitar", "8bit"])
         self.tempo_menu = CTkButton(playback_frame, text=f"{120}bpm", width=80, height=32)
 
+        # Set default values
+
+        self.tonic_menu.set(DEFAULT_TONIC)
+        self.mode_menu.set(DEFAULT_MODE)
+        self.instrument_menu.set(DEFAULT_INSTRUMENT)
+        self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
+
     def get_tonic(self):
         return self.tonic_menu.get()
     
@@ -77,13 +92,33 @@ class ProjectManager():
         return self.mode_menu.get()
     
     def get_time_signature(self):
-        return self.ts_menu.get()
+        return self.time_signature_menu.get()
     
     def get_tempo(self):
         return self.tempo_menu.get()
     
     def get_instrument(self):
         return self.instrument_menu.get()
+    
+    def get_chords(self, key):
+        numerals = {
+            0: "i",
+            1: "ii",
+            2: "iii",
+            3: "iv",
+            4: "v",
+            5: "vi",
+            6: "vii",
+            7: "viii",
+        }
+        chords = []
+        for num in range(7):
+            temp_chord = chord.Chord(roman.RomanNumeral(numerals[num], key.key, caseMatters=False))
+            if numpy.setdiff1d(temp_chord.pitches, key.scale.getPitches()).any():
+                pass
+            else:
+                chords.append(temp_chord)
+        pass
 
 class App(CTk):
     def __init__(self):
@@ -228,11 +263,11 @@ class App(CTk):
         self.manager.mode_menu.grid(row=0, column=1, padx=8)
         self.manager.instrument_menu.grid(row=0, column=3, padx=8, pady=8)
         self.manager.tempo_menu.grid(row=0, column=5, padx=8, pady=8)
-        self.manager.ts_menu.grid(row=0, column=6, padx=8, pady=8)
+        self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
     def loop(self):
-        print(app.manager.get_tonic())
-        print(app.manager.get_mode())
+        print(f"{app.manager.get_tonic()} {app.manager.get_mode()}")
+        print(app.manager.get_chords(C_MAJ))
         self.after(10, self.loop)
 
 class CanvasKey:
@@ -247,8 +282,13 @@ class CanvasKey:
             "Locrian": scale.LocrianScale,
         }
 
-        self.scale = scale_key[mode](pitch.Pitch(tonic))
+        self.tonic = tonic
+        self.mode = mode
+        self.key = key.Key(tonic, mode)
+        self.scale = self.key.getScale()
+        self.relative = self.key.relative
 
 app = App()
+C_MAJ = CanvasKey(app.manager.get_tonic(), app.manager.get_mode())
 app.loop()
 app.mainloop()
