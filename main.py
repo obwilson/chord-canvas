@@ -8,7 +8,7 @@ set_appearance_mode("System")
 set_default_color_theme("./assets/theme.json")
 
 DEFAULT_TONIC = "C"
-DEFAULT_MODE = "Major"
+DEFAULT_MODE = "Mixolydian"
 DEFAULT_INSTRUMENT = "Piano"
 DEFAULT_TEMPO = 120
 DEFAULT_TIME_SIGNATURE = "4/4"
@@ -129,7 +129,8 @@ class ProjectManager():
                 print("not valid chord")
 
         # maj/min
-        chords.append(chord.Chord(roman.RomanNumeral(numerals[num], key.key, caseMatters=False)))
+        for num in range(7):
+            chords.append(chord.Chord(roman.RomanNumeral(numerals[num], key.key, caseMatters=False)))
 
         #sus4
         for num in range(7):
@@ -311,7 +312,7 @@ class App(CTk):
 
     def loop(self):
         print(f"{app.manager.get_tonic()} {app.manager.get_mode()}")
-        print(app.manager.get_chords(C_MAJ))
+        print(app.manager.get_chords(CanvasKey(app.manager.get_tonic(), app.manager.get_mode())))
         self.after(10, self.loop)
 
 class CanvasKey:
@@ -333,6 +334,5 @@ class CanvasKey:
         self.relative = self.key.relative
 
 app = App()
-C_MAJ = CanvasKey(app.manager.get_tonic(), app.manager.get_mode())
 app.loop()
 app.mainloop()
