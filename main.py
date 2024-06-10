@@ -111,14 +111,58 @@ class ProjectManager():
             6: "vii",
             7: "viii",
         }
-        chords = []
+        chords = []        
+
+        # sus2
         for num in range(7):
-            temp_chord = chord.Chord(roman.RomanNumeral(numerals[num], key.key, caseMatters=False))
-            if numpy.setdiff1d(temp_chord.pitches, key.scale.getPitches()).any():
-                pass
-            else:
+            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}[add2][no3]", key.key, caseMatters=False))
+            scale_notes = []
+            chord_notes = []
+            for pitch in key.scale.getPitches():
+                scale_notes.append(pitch.unicodeName)
+            for pitch in temp_chord.pitches:
+                chord_notes.append(pitch.unicodeName.replace("♮",""))
+            
+            if not numpy.setdiff1d(chord_notes, scale_notes):
                 chords.append(temp_chord)
-        pass
+            else:
+                print("not valid chord")
+
+        # maj/min
+        chords.append(chord.Chord(roman.RomanNumeral(numerals[num], key.key, caseMatters=False)))
+
+        #sus4
+        for num in range(7):
+            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}[add4][no3]", key.key, caseMatters=False))
+            scale_notes = []
+            chord_notes = []
+            for pitch in key.scale.getPitches():
+                scale_notes.append(pitch.unicodeName)
+            for pitch in temp_chord.pitches:
+                chord_notes.append(pitch.unicodeName.replace("♮",""))
+            
+            if not numpy.setdiff1d(chord_notes, scale_notes):
+                chords.append(temp_chord)
+            else:
+                print("not valid chord")
+
+        #7
+        for num in range(7):
+            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}7", key.key, caseMatters=False))
+            scale_notes = []
+            chord_notes = []
+            for pitch in key.scale.getPitches():
+                scale_notes.append(pitch.unicodeName)
+            for pitch in temp_chord.pitches:
+                chord_notes.append(pitch.unicodeName.replace("♮",""))
+            
+            if not numpy.setdiff1d(chord_notes, scale_notes):
+                chords.append(temp_chord)
+            else:
+                print("not valid chord")
+
+        print(chords)
+            
 
 class App(CTk):
     def __init__(self):
