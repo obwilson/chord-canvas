@@ -91,6 +91,17 @@ class ProjectManager():
     def get_mode(self):
         return self.mode_menu.get()
     
+    def get_key(self):
+        return key.Key(self.tonic_menu.get(), self.mode_menu.get())
+    
+    def get_scale(self):
+        self.key = key.Key(self.tonic_menu.get(), self.mode_menu.get())
+        return self.key.getScale()
+    
+    def get_relative(self):
+        self.key = key.Key(self.tonic_menu.get(), self.mode_menu.get())
+        return self.key.relative
+    
     def get_time_signature(self):
         return self.time_signature_menu.get()
     
@@ -100,7 +111,7 @@ class ProjectManager():
     def get_instrument(self):
         return self.instrument_menu.get()
     
-    def get_chords(self, key):
+    def get_chords(self):
         numerals = {
             0: "i",
             1: "ii",
@@ -115,10 +126,10 @@ class ProjectManager():
 
         # sus2
         for num in range(7):
-            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}[add2][no3]", key.key, caseMatters=False))
+            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}[add2][no3]", self.get_key(), caseMatters=False))
             scale_notes = []
             chord_notes = []
-            for pitch in key.scale.getPitches():
+            for pitch in self.get_scale().getPitches():
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮",""))
@@ -130,14 +141,14 @@ class ProjectManager():
 
         # maj/min
         for num in range(7):
-            chords.append(chord.Chord(roman.RomanNumeral(numerals[num], key.key, caseMatters=False)))
+            chords.append(chord.Chord(roman.RomanNumeral(numerals[num], self.get_key(), caseMatters=False)))
 
         #sus4
         for num in range(7):
-            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}[add4][no3]", key.key, caseMatters=False))
+            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}[add4][no3]", self.get_key(), caseMatters=False))
             scale_notes = []
             chord_notes = []
-            for pitch in key.scale.getPitches():
+            for pitch in self.get_scale().getPitches():
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮",""))
@@ -149,10 +160,10 @@ class ProjectManager():
 
         #7
         for num in range(7):
-            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}7", key.key, caseMatters=False))
+            temp_chord = chord.Chord(roman.RomanNumeral(f"{numerals[num]}7", self.get_key(), caseMatters=False))
             scale_notes = []
             chord_notes = []
-            for pitch in key.scale.getPitches():
+            for pitch in self.get_scale().getPitches():
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮",""))
@@ -162,7 +173,7 @@ class ProjectManager():
             else:
                 print("not valid chord")
 
-        print(chords)
+        return chords
             
 
 class App(CTk):
@@ -312,26 +323,10 @@ class App(CTk):
 
     def loop(self):
         print(f"{app.manager.get_tonic()} {app.manager.get_mode()}")
-        print(app.manager.get_chords(CanvasKey(app.manager.get_tonic(), app.manager.get_mode())))
+        for chord in app.manager.get_chords():
+            print(chord.pitchedCommonName)
+
         self.after(10, self.loop)
-
-class CanvasKey:
-    def __init__(self, tonic, mode):
-        scale_key = {
-            "Major": scale.MajorScale,
-            "Minor": scale.MinorScale,
-            "Dorian": scale.DorianScale,
-            "Phrygian": scale.PhrygianScale,
-            "Lydian": scale.LydianScale,
-            "Mixolydian": scale.MixolydianScale,
-            "Locrian": scale.LocrianScale,
-        }
-
-        self.tonic = tonic
-        self.mode = mode
-        self.key = key.Key(tonic, mode)
-        self.scale = self.key.getScale()
-        self.relative = self.key.relative
 
 app = App()
 app.loop()
