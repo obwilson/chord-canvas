@@ -14,7 +14,7 @@ DEFAULT_TEMPO = 120
 DEFAULT_TIME_SIGNATURE = "4/4"
 
 class ProjectManager():
-    def __init__(self, FONT, palette_menu_bar, playback_frame):
+    def __init__(self, FONT, palette_menu_bar, chord_button_menu, playback_frame):
         self.tonic_menu = CTkOptionMenu(
             palette_menu_bar,
             width=64,
@@ -77,6 +77,14 @@ class ProjectManager():
         )
         self.instrument_menu = CTkOptionMenu(playback_frame, width=120, height=32, values=["Piano", "Guitar", "8bit"])
         self.tempo_menu = CTkButton(playback_frame, text=f"{120}bpm", width=80, height=32)
+
+        # Create buttons
+
+        self.chord_buttons = []
+        for column in range(7):
+            for row in range(4):
+                self.chord_buttons.append(CTkButton(chord_button_menu, text="Csus2", corner_radius=8, width=64, height=32))
+                self.chord_buttons[row + column].grid(row=row, column=column, padx=8, pady=8)
 
         # Set default values
 
@@ -265,6 +273,9 @@ class App(CTk):
         )
         self.modulate_button.grid(row=0, column=3)
 
+        self.chord_button_menu = CTkFrame(self.tabs.tab("Palette"), width=560, height=192, fg_color="Green")
+        self.chord_button_menu.grid(row=1, column=0, rowspan=4, columnspan=7)
+
         # Timeline
 
         self.timeline_frame = CTkScrollableFrame(
@@ -313,7 +324,7 @@ class App(CTk):
         )
         self.stop_button.grid(row=0, column=2, padx=8, pady=8)
 
-        self.manager = ProjectManager(self.FONT, self.palette_menu_bar, self.playback_frame)
+        self.manager = ProjectManager(self.FONT, self.palette_menu_bar, self.chord_button_menu, self.playback_frame)
 
         self.manager.tonic_menu.grid(row=0, column=0, padx=(0, 8))
         self.manager.mode_menu.grid(row=0, column=1, padx=8)
