@@ -40,6 +40,7 @@ class ProjectManager:
                 "Bb",
                 "B",
             ],
+            command=self.on_tonic_mode_selected,
         )
         self.mode_menu = CTkOptionMenu(
             palette_menu_bar,
@@ -55,6 +56,7 @@ class ProjectManager:
                 "Mixolydian",
                 "Locrian",
             ],
+            command=self.on_tonic_mode_selected,
         )
         self.time_signature_menu = CTkOptionMenu(
             playback_frame,
@@ -107,6 +109,9 @@ class ProjectManager:
         self.mode_menu.set(DEFAULT_MODE)
         self.instrument_menu.set(DEFAULT_INSTRUMENT)
         self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
+
+    def on_tonic_mode_selected(self, option):
+        self.set_chords()
 
     def get_tonic(self):
         return self.tonic_menu.get()
@@ -169,6 +174,22 @@ class ProjectManager:
                     .replace("♯", "#")
                     .replace("E#", "F")
                     .replace("B#", "C")
+                    .replace("Fb", "E")
+                    .replace("Cb", "B")
+                    .replace("A𝄪", "B")
+                    .replace("B𝄪", "C#")
+                    .replace("C𝄪", "D")
+                    .replace("D𝄪", "E")
+                    .replace("E𝄪", "F#")
+                    .replace("F𝄪", "G")
+                    .replace("G𝄪", "A")
+                    .replace("A𝄫", "G")
+                    .replace("B𝄫", "A")
+                    .replace("C𝄫", "Bb")
+                    .replace("D𝄫", "C")
+                    .replace("E𝄫", "D")
+                    .replace("F𝄫", "Eb")
+                    .replace("G𝄫", "F")
                 )
 
             if not numpy.setdiff1d(
@@ -177,7 +198,9 @@ class ProjectManager:
                 chords.append(
                     [
                         index,
-                        f"{str(pychord.find_chords_from_notes(formatted_pitch_names)[0])}",
+                        str(
+                            pychord.find_chords_from_notes(formatted_pitch_names)[0]
+                        ).replace("-", "b"),
                         temp_chord,
                     ]
                 )
@@ -203,6 +226,22 @@ class ProjectManager:
                     .replace("♯", "#")
                     .replace("E#", "F")
                     .replace("B#", "C")
+                    .replace("Fb", "E")
+                    .replace("Cb", "B")
+                    .replace("A𝄪", "B")
+                    .replace("B𝄪", "C#")
+                    .replace("C𝄪", "D")
+                    .replace("D𝄪", "E")
+                    .replace("E𝄪", "F#")
+                    .replace("F𝄪", "G")
+                    .replace("G𝄪", "A")
+                    .replace("A𝄫", "G")
+                    .replace("B𝄫", "A")
+                    .replace("C𝄫", "Bb")
+                    .replace("D𝄫", "C")
+                    .replace("E𝄫", "D")
+                    .replace("F𝄫", "Eb")
+                    .replace("G𝄫", "F")
                 )
 
             if not numpy.setdiff1d(
@@ -211,7 +250,9 @@ class ProjectManager:
                 chords.append(
                     [
                         index,
-                        f"{str(pychord.find_chords_from_notes(formatted_pitch_names)[0])}",
+                        str(
+                            pychord.find_chords_from_notes(formatted_pitch_names)[0]
+                        ).replace("-", "b"),
                         temp_chord,
                     ]
                 )
@@ -239,6 +280,22 @@ class ProjectManager:
                     .replace("♯", "#")
                     .replace("E#", "F")
                     .replace("B#", "C")
+                    .replace("Fb", "E")
+                    .replace("Cb", "B")
+                    .replace("A𝄪", "B")
+                    .replace("B𝄪", "C#")
+                    .replace("C𝄪", "D")
+                    .replace("D𝄪", "E")
+                    .replace("E𝄪", "F#")
+                    .replace("F𝄪", "G")
+                    .replace("G𝄪", "A")
+                    .replace("A𝄫", "G")
+                    .replace("B𝄫", "A")
+                    .replace("C𝄫", "Bb")
+                    .replace("D𝄫", "C")
+                    .replace("E𝄫", "D")
+                    .replace("F𝄫", "Eb")
+                    .replace("G𝄫", "F")
                 )
 
             if not numpy.setdiff1d(
@@ -247,7 +304,9 @@ class ProjectManager:
                 chords.append(
                     [
                         index,
-                        f"{str(pychord.find_chords_from_notes(formatted_pitch_names)[0])}",
+                        str(
+                            pychord.find_chords_from_notes(formatted_pitch_names)[0]
+                        ).replace("-", "b"),
                         temp_chord,
                     ]
                 )
@@ -275,6 +334,22 @@ class ProjectManager:
                     .replace("♯", "#")
                     .replace("E#", "F")
                     .replace("B#", "C")
+                    .replace("Fb", "E")
+                    .replace("Cb", "B")
+                    .replace("A𝄪", "B")
+                    .replace("B𝄪", "C#")
+                    .replace("C𝄪", "D")
+                    .replace("D𝄪", "E")
+                    .replace("E𝄪", "F#")
+                    .replace("F𝄪", "G")
+                    .replace("G𝄪", "A")
+                    .replace("A𝄫", "G")
+                    .replace("B𝄫", "A")
+                    .replace("C𝄫", "Bb")
+                    .replace("D𝄫", "C")
+                    .replace("E𝄫", "D")
+                    .replace("F𝄫", "Eb")
+                    .replace("G𝄫", "F")
                 )
 
             if not numpy.setdiff1d(
@@ -283,7 +358,9 @@ class ProjectManager:
                 chords.append(
                     [
                         index,
-                        f"{str(pychord.find_chords_from_notes(formatted_pitch_names)[0])}",
+                        str(
+                            pychord.find_chords_from_notes(formatted_pitch_names)[0]
+                        ).replace("-", "b"),
                         temp_chord,
                     ]
                 )
@@ -295,8 +372,11 @@ class ProjectManager:
     def set_chords(self):
         chords = self.get_chords()
 
+        for i in self.chord_buttons:
+            i.configure(text="", fg_color="#7A8197")
+
         for i in chords:
-            self.chord_buttons[i[0]].configure(text=i[1])
+            self.chord_buttons[i[0]].configure(text=i[1], fg_color="#AFB5C7")
 
 
 class App(CTk):
@@ -480,14 +560,11 @@ class App(CTk):
         self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
     def loop(self):
-        # print(f"{app.manager.get_tonic()} {app.manager.get_mode()}")
-        # for chord in app.manager.get_chords():
-        #     print(chord.pitchedCommonName)
-        app.manager.set_chords()
 
-        self.after(10, self.loop)
+        self.after(100, self.loop)
 
 
 app = App()
 app.loop()
+app.manager.set_chords()
 app.mainloop()
