@@ -157,32 +157,64 @@ class ProjectManager:
             )
             scale_notes = []
             chord_notes = []
+            formatted_pitch_names = []
+
             for pitch in self.get_scale().getPitches():
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
+                formatted_pitch_names.append(
+                    pitch.unicodeName.replace("♮", "")
+                    .replace("♭", "b")
+                    .replace("♯", "#")
+                    .replace("E#", "F")
+                    .replace("B#", "C")
+                )
 
-            if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
-                chords.append([index, f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+            if not numpy.setdiff1d(
+                chord_notes, scale_notes
+            ) and pychord.find_chords_from_notes(formatted_pitch_names):
+                chords.append(
+                    [
+                        index,
+                        f"{str(pychord.find_chords_from_notes(formatted_pitch_names)[0])}",
+                        temp_chord,
+                    ]
+                )
 
             index += 1
 
         # maj/min
         for num in range(7):
             temp_chord = chord.Chord(
-                roman.RomanNumeral(
-                    numerals[num], self.get_key(), caseMatters=False
-                )
+                roman.RomanNumeral(numerals[num], self.get_key(), caseMatters=False)
             )
             scale_notes = []
             chord_notes = []
+            formatted_pitch_names = []
+
             for pitch in self.get_scale().getPitches():
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
+                formatted_pitch_names.append(
+                    pitch.unicodeName.replace("♮", "")
+                    .replace("♭", "b")
+                    .replace("♯", "#")
+                    .replace("E#", "F")
+                    .replace("B#", "C")
+                )
 
-            if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
-                chords.append([index, f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+            if not numpy.setdiff1d(
+                chord_notes, scale_notes
+            ) and pychord.find_chords_from_notes(formatted_pitch_names):
+                chords.append(
+                    [
+                        index,
+                        f"{str(pychord.find_chords_from_notes(formatted_pitch_names)[0])}",
+                        temp_chord,
+                    ]
+                )
 
             index += 1
 
@@ -195,13 +227,30 @@ class ProjectManager:
             )
             scale_notes = []
             chord_notes = []
+            formatted_pitch_names = []
+
             for pitch in self.get_scale().getPitches():
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
+                formatted_pitch_names.append(
+                    pitch.unicodeName.replace("♮", "")
+                    .replace("♭", "b")
+                    .replace("♯", "#")
+                    .replace("E#", "F")
+                    .replace("B#", "C")
+                )
 
-            if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
-                chords.append([index, f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+            if not numpy.setdiff1d(
+                chord_notes, scale_notes
+            ) and pychord.find_chords_from_notes(formatted_pitch_names):
+                chords.append(
+                    [
+                        index,
+                        f"{str(pychord.find_chords_from_notes(formatted_pitch_names)[0])}",
+                        temp_chord,
+                    ]
+                )
 
             index += 1
 
@@ -214,23 +263,40 @@ class ProjectManager:
             )
             scale_notes = []
             chord_notes = []
+            formatted_pitch_names = []
+
             for pitch in self.get_scale().getPitches():
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
+                formatted_pitch_names.append(
+                    pitch.unicodeName.replace("♮", "")
+                    .replace("♭", "b")
+                    .replace("♯", "#")
+                    .replace("E#", "F")
+                    .replace("B#", "C")
+                )
 
-            if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
-                chords.append([index, f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+            if not numpy.setdiff1d(
+                chord_notes, scale_notes
+            ) and pychord.find_chords_from_notes(formatted_pitch_names):
+                chords.append(
+                    [
+                        index,
+                        f"{str(pychord.find_chords_from_notes(formatted_pitch_names)[0])}",
+                        temp_chord,
+                    ]
+                )
 
             index += 1
 
         return chords
-    
+
     def set_chords(self):
         chords = self.get_chords()
-        
+
         for i in chords:
-                self.chord_buttons[i[0]].configure(text=i[1])
+            self.chord_buttons[i[0]].configure(text=i[1])
 
 
 class App(CTk):
