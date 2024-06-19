@@ -1,7 +1,7 @@
 from customtkinter import *
 from PIL import Image
 from music21 import *
-from pychord import Chord
+import pychord
 import numpy
 
 set_appearance_mode("System")
@@ -145,7 +145,7 @@ class ProjectManager:
             6: "vii",
             7: "viii",
         }
-        chords = {}
+        chords = []
 
         # sus2
         for num in range(7):
@@ -161,16 +161,25 @@ class ProjectManager:
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
 
-            if not numpy.setdiff1d(chord_notes, scale_notes):
-                chords[f"{num}sus2"] = [f"{self.get_scale().getPitches()[num].fullName}sus2", temp_chord]
+            if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
+                chords.append([f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
 
         # maj/min
         for num in range(7):
-            chords[self.get_scale().getPitches()[num].fullName] = chord.Chord(
-                    roman.RomanNumeral(numerals[num], self.get_key(), caseMatters=False)
+            temp_chord = chord.Chord(
+                roman.RomanNumeral(
+                    numerals[num], self.get_key(), caseMatters=False
                 )
-            
-            chords[num] = [self.get_scale().getPitches()[num].fullName, temp_chord]
+            )
+            scale_notes = []
+            chord_notes = []
+            for pitch in self.get_scale().getPitches():
+                scale_notes.append(pitch.unicodeName)
+            for pitch in temp_chord.pitches:
+                chord_notes.append(pitch.unicodeName.replace("♮", ""))
+
+            if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
+                chords.append([f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
 
         # sus4
         for num in range(7):
@@ -186,8 +195,8 @@ class ProjectManager:
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
 
-            if not numpy.setdiff1d(chord_notes, scale_notes):
-                chords[f"{num}sus4"] = [f"{self.get_scale().getPitches()[num].fullName}sus4", temp_chord]
+            if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
+                chords.append([f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
 
         # 7
         for num in range(7):
@@ -203,8 +212,8 @@ class ProjectManager:
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
 
-            if not numpy.setdiff1d(chord_notes, scale_notes):
-                chords[f"{num}7"] = [f"{self.get_scale().getPitches()[num].fullName}7", temp_chord]
+            if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
+                chords.append([f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
 
         return chords
     
