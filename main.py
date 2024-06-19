@@ -86,12 +86,12 @@ class ProjectManager:
         # Create buttons
 
         self.chord_buttons = []
-        for column in range(7):
-            for row in range(4):
+        for row in range(4):
+            for column in range(7):
                 self.chord_buttons.append(
                     CTkButton(
                         chord_button_menu,
-                        text="Chord",
+                        text="",
                         font=FONT,
                         corner_radius=8,
                         width=64,
@@ -146,6 +146,7 @@ class ProjectManager:
             7: "viii",
         }
         chords = []
+        index = 0
 
         # sus2
         for num in range(7):
@@ -162,7 +163,9 @@ class ProjectManager:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
 
             if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
-                chords.append([f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+                chords.append([index, f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+
+            index += 1
 
         # maj/min
         for num in range(7):
@@ -179,7 +182,9 @@ class ProjectManager:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
 
             if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
-                chords.append([f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+                chords.append([index, f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+
+            index += 1
 
         # sus4
         for num in range(7):
@@ -196,7 +201,9 @@ class ProjectManager:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
 
             if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
-                chords.append([f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+                chords.append([index, f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+
+            index += 1
 
         # 7
         for num in range(7):
@@ -213,16 +220,17 @@ class ProjectManager:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
 
             if not numpy.setdiff1d(chord_notes, scale_notes) and pychord.find_chords_from_notes(temp_chord.pitchNames):
-                chords.append([f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+                chords.append([index, f"{str(pychord.find_chords_from_notes(temp_chord.pitchNames)[0]).replace("-", "b")}", temp_chord])
+
+            index += 1
 
         return chords
     
     def set_chords(self):
         chords = self.get_chords()
-        # for i in chords:
-        #     self.chord_buttons[i].configure(text=)
-
-        print(self.get_chords())
+        
+        for i in chords:
+                self.chord_buttons[i[0]].configure(text=i[1])
 
 
 class App(CTk):
@@ -410,7 +418,6 @@ class App(CTk):
         # for chord in app.manager.get_chords():
         #     print(chord.pitchedCommonName)
         app.manager.set_chords()
-        print("")
 
         self.after(10, self.loop)
 
