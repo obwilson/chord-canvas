@@ -204,6 +204,8 @@ class ProjectManager:
                         temp_chord,
                     ]
                 )
+            else:
+                chords.append([index, "", None])
 
             index += 1
 
@@ -256,6 +258,8 @@ class ProjectManager:
                         temp_chord,
                     ]
                 )
+            else:
+                chords.append([index, "", None])
 
             index += 1
 
@@ -310,6 +314,8 @@ class ProjectManager:
                         temp_chord,
                     ]
                 )
+            else:
+                chords.append([index, "", None])
 
             index += 1
 
@@ -364,6 +370,8 @@ class ProjectManager:
                         temp_chord,
                     ]
                 )
+            else:
+                chords.append([index, "", None])
 
             index += 1
 
@@ -371,12 +379,17 @@ class ProjectManager:
 
     def set_chords(self):
         chords = self.get_chords()
+        print(chords)
 
         for i in self.chord_buttons:
-            i.configure(text="", fg_color="#7A8197")
+            i.configure(text="", fg_color="#7A8197", state="disabled")
 
         for i in chords:
-            self.chord_buttons[i[0]].configure(text=i[1], fg_color="#AFB5C7")
+            if not i[2] == None:
+                self.chord_buttons[i[0]].configure(text=i[1], fg_color="#AFB5C7", state="normal")
+                if len(i[1]) > 5:
+                    self.chord_buttons[i[0]].configure(font=("./assets/Inter.ttf", 11))
+
 
 
 class App(CTk):
