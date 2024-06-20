@@ -87,11 +87,11 @@ class ProjectManager:
 
         # Create buttons
 
-        self.chord_buttons = []
+        self.chord_buttons = {}
+        index = 0
         for row in range(4):
             for column in range(7):
-                self.chord_buttons.append(
-                    CTkButton(
+                self.chord_buttons[index] = CTkButton(
                         chord_button_menu,
                         text="",
                         font=FONT,
@@ -99,9 +99,10 @@ class ProjectManager:
                         width=64,
                         height=32,
                     )
-                )
+                self.chord_buttons[index].configure(command=lambda i=index: print(self.get_chords()[i]))
+                self.chord_buttons[index].grid(row=row, column=column, padx=8, pady=8)
 
-                self.chord_buttons[-1].grid(row=row, column=column, padx=8, pady=8)
+                index += 1
 
         # Set default values
 
@@ -382,15 +383,13 @@ class ProjectManager:
         print(chords)
 
         for i in self.chord_buttons:
-            i.configure(text="", fg_color="#7A8197", state="disabled")
+            self.chord_buttons[i].configure(text="", fg_color="#7A8197", state="disabled", font=("./assets/Inter.ttf", 14))
 
         for i in chords:
             if not i[2] == None:
                 self.chord_buttons[i[0]].configure(text=i[1], fg_color="#AFB5C7", state="normal")
                 if len(i[1]) > 5:
                     self.chord_buttons[i[0]].configure(font=("./assets/Inter.ttf", 11))
-
-
 
 class App(CTk):
     def __init__(self):
