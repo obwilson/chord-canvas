@@ -1,4 +1,5 @@
 from customtkinter import *
+from CTkMessagebox import *
 from PIL import Image
 from music21 import *
 import pychord
@@ -16,6 +17,8 @@ DEFAULT_TIME_SIGNATURE = "4/4"
 
 class ProjectManager:
     def __init__(self, FONT, palette_menu_bar, chord_button_menu, playback_frame):
+        # Create menus
+
         self.tonic_menu = CTkOptionMenu(
             palette_menu_bar,
             width=64,
@@ -100,7 +103,7 @@ class ProjectManager:
                     height=32,
                 )
                 self.chord_buttons[index].configure(
-                    command=lambda i=index: print(self.get_chords()[i])
+                    command=lambda i=index: self.timeline.append(self.get_chords()[i])
                 )
                 self.chord_buttons[index].grid(row=row, column=column, padx=8, pady=8)
 
@@ -112,6 +115,8 @@ class ProjectManager:
         self.mode_menu.set(DEFAULT_MODE)
         self.instrument_menu.set(DEFAULT_INSTRUMENT)
         self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
+
+        self.timeline = []
 
     def on_tonic_mode_selected(self, option):
         self.set_chords()
@@ -404,6 +409,24 @@ class ProjectManager:
                 if len(i[1]) > 5:
                     self.chord_buttons[i[0]].configure(font=("./assets/Inter.ttf", 11))
 
+    def reset_timeline(self):
+        prompt = CTkMessagebox(
+            width=432,
+            height=224,
+            title="Clear Timeline?",
+            message="Are you sure you want to clear your timeline?",
+            option_1="Yes",
+            option_2="No",
+            corner_radius=8,
+            font=CTkFont("./assets/Inter.ttf", size=14),
+            icon="./assets/icons/warning.png",
+        )
+        
+        if prompt.get() == "Yes":
+            self.timeline = []
+
+    def print_timeline(self):
+        print(self.timeline)
 
 class App(CTk):
     def __init__(self):
@@ -425,8 +448,8 @@ class App(CTk):
         self.PAUSE_ICON = CTkImage(
             light_image=Image.open("./assets/icons/pause.png"), size=(16, 16)
         )
-        self.STOP_ICON = CTkImage(
-            light_image=Image.open("./assets/icons/stop.png"), size=(16, 16)
+        self.RESET_ICON = CTkImage(
+            light_image=Image.open("./assets/icons/reset.png"), size=(16, 16)
         )
 
         # Create Frames
@@ -515,7 +538,7 @@ class App(CTk):
         )
         self.palette_frame.grid(row=1, column=0, padx=8)
         self.modulate_button = CTkButton(
-            self.palette_menu_bar, width=144, height=32, text="Change Key"
+            self.palette_menu_bar, width=144, height=32, text="Change Key",
         )
         self.modulate_button.grid(row=0, column=3, padx=0)
 
@@ -562,15 +585,15 @@ class App(CTk):
             border_spacing=8,
         )
         self.pause_button.grid(row=0, column=1, padx=8, pady=8)
-        self.stop_button = CTkButton(
+        self.reset_button = CTkButton(
             self.playback_frame,
             width=32,
             height=32,
             text="",
-            image=self.STOP_ICON,
+            image=self.RESET_ICON,
             border_spacing=8,
         )
-        self.stop_button.grid(row=0, column=2, padx=8, pady=8)
+        self.reset_button.grid(row=0, column=2, padx=8, pady=8)
 
         self.manager = ProjectManager(
             self.FONT,
@@ -579,6 +602,8 @@ class App(CTk):
             self.playback_frame,
         )
 
+        self.reset_button.configure(command= self.manager.reset_timeline)
+
         self.manager.tonic_menu.grid(row=0, column=0, padx=(0, 8))
         self.manager.mode_menu.grid(row=0, column=1, padx=8)
         self.manager.instrument_menu.grid(row=0, column=3, padx=8, pady=8)
@@ -586,7 +611,7 @@ class App(CTk):
         self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
     def loop(self):
-
+        print(self.manager.timeline)
         self.after(100, self.loop)
 
 
