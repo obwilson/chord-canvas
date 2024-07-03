@@ -411,15 +411,19 @@ class ProjectManager:
 
     def reset_timeline(self):
         prompt = CTkMessagebox(
-            width=432,
-            height=224,
+            width=176,
+            height=128,
+            button_width=64,
+            button_height=32,
             title="Clear Timeline?",
             message="Are you sure you want to clear your timeline?",
             option_1="Yes",
             option_2="No",
             corner_radius=8,
+            border_width=2,
             font=CTkFont("./assets/Inter.ttf", size=14),
             icon="./assets/icons/warning.png",
+            border_color="#DFE0E6",
         )
         
         if prompt.get() == "Yes":
