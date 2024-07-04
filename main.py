@@ -16,7 +16,7 @@ DEFAULT_TIME_SIGNATURE = "4/4"
 
 
 class ProjectManager:
-    def __init__(self, FONT, palette_menu_bar, chord_button_menu, playback_frame):
+    def __init__(self, FONT, palette_menu_bar, chord_button_menu, playback_frame, timeline_frame):
         # Create menus
 
         self.tonic_menu = CTkOptionMenu(
@@ -103,7 +103,8 @@ class ProjectManager:
                     height=32,
                 )
                 self.chord_buttons[index].configure(
-                    command=lambda i=index: self.timeline.append(self.get_chords()[i])
+                    # command=lambda i=index: self.timeline.append(self.get_chords()[i])
+                    command=lambda i=index: self.create_chord_frame(timeline_frame, self.get_chords()[i])
                 )
                 self.chord_buttons[index].grid(row=row, column=column, padx=8, pady=8)
 
@@ -117,6 +118,7 @@ class ProjectManager:
         self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
 
         self.timeline = []
+        self.chord_frames = []
 
     def on_tonic_mode_selected(self, option):
         self.set_chords()
@@ -391,7 +393,6 @@ class ProjectManager:
 
     def set_chords(self):
         chords = self.get_chords()
-        print(chords)
 
         for i in self.chord_buttons:
             self.chord_buttons[i].configure(
@@ -409,7 +410,7 @@ class ProjectManager:
                 if len(i[1]) > 5:
                     self.chord_buttons[i[0]].configure(font=("./assets/Inter.ttf", 11))
 
-    def reset_timeline(self):
+    def reset_timeline(self, timeline_frame):
         prompt = CTkMessagebox(
             width=176,
             height=128,
@@ -428,9 +429,19 @@ class ProjectManager:
         
         if prompt.get() == "Yes":
             self.timeline = []
+            for frame in timeline_frame.winfo_children():
+                frame.destroy()
+            self.chord_frames = []
 
-    def print_timeline(self):
+    def create_chord_frame(self, master, chord):
         print(self.timeline)
+        self.chord_frames.append(CTkFrame(master, width=96, height=64, fg_color="#AFB5C7"))
+        self.chord_frames[-1].grid_propagate(False)
+        self.chord_frames[-1].pack(padx=8, pady=8, side=LEFT)
+        self.label = CTkLabel(self.chord_frames[-1], text=chord[1], font=CTkFont("./assets/Inter.ttf", size=24), width=80, height=32)
+        self.label.grid(padx=8, pady=(8, 0), row=0)
+        self.edit_button = CTkButton(self.chord_frames[-1], width=80, height=16, fg_color="#7A8197", text="Edit", font=CTkFont("./assets/Inter.ttf", size=12))
+        self.edit_button.grid(padx=8, pady=(0, 8), row=1)
 
 class App(CTk):
     def __init__(self):
@@ -604,9 +615,10 @@ class App(CTk):
             self.palette_menu_bar,
             self.chord_button_menu,
             self.playback_frame,
+            self.timeline_frame
         )
 
-        self.reset_button.configure(command= self.manager.reset_timeline)
+        self.reset_button.configure(command=lambda: self.manager.reset_timeline(self.timeline_frame))
 
         self.manager.tonic_menu.grid(row=0, column=0, padx=(0, 8))
         self.manager.mode_menu.grid(row=0, column=1, padx=8)
