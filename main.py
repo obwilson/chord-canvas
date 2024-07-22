@@ -17,7 +17,8 @@ DEFAULT_TIME_SIGNATURE = "4/4"
 
 class ProjectManager:
     def __init__(
-        self, FONT, palette_menu_bar, chord_button_menu, playback_frame, timeline_frame
+        self, FONT, palette_menu_bar, chord_button_menu, playback_frame,
+        timeline_frame
     ):
         # Create menus
 
@@ -84,10 +85,12 @@ class ProjectManager:
             height=32,
         )
         self.instrument_menu = CTkOptionMenu(
-            playback_frame, width=120, height=32, values=["Piano", "Guitar", "8bit"]
+            playback_frame, width=120, height=32,
+            values=["Piano", "Guitar", "8bit"]
         )
         self.tempo_menu = CTkEntry(
-            playback_frame, width=80, height=32, fg_color="#AFB5C7", text_color="#0E0E0E"
+            playback_frame, width=80, height=32, fg_color="#AFB5C7",
+            text_color="#0E0E0E"
         )
 
         # Create buttons
@@ -109,7 +112,8 @@ class ProjectManager:
                         timeline_frame, self.get_chords()[i]
                     )
                 )
-                self.chord_buttons[index].grid(row=row, column=column, padx=8, pady=8)
+                self.chord_buttons[index].grid(row=row, column=column, padx=8,
+                                               pady=8)
 
                 index += 1
 
@@ -124,7 +128,7 @@ class ProjectManager:
         self.timeline = []
         self.chord_frames = []
 
-    def on_tonic_mode_selected(self, option):
+    def on_tonic_mode_selected(self):
         self.set_chords()
 
     def get_tonic(self):
@@ -171,7 +175,8 @@ class ProjectManager:
         for num in range(7):
             temp_chord = chord.Chord(
                 roman.RomanNumeral(
-                    f"{numerals[num]}[add2][no3]", self.get_key(), caseMatters=False
+                    f"{numerals[num]}[add2][no3]", self.get_key(),
+                    caseMatters=False
                 )
             )
             scale_notes = []
@@ -213,7 +218,9 @@ class ProjectManager:
                     [
                         index,
                         str(
-                            pychord.find_chords_from_notes(formatted_pitch_names)[0]
+                            pychord.find_chords_from_notes(
+                                formatted_pitch_names
+                            )[0]
                         ).replace("-", "b"),
                         temp_chord,
                         self.get_key(),
@@ -227,7 +234,8 @@ class ProjectManager:
         # maj/min
         for num in range(7):
             temp_chord = chord.Chord(
-                roman.RomanNumeral(numerals[num], self.get_key(), caseMatters=False)
+                roman.RomanNumeral(numerals[num], self.get_key(),
+                                   caseMatters=False)
             )
             scale_notes = []
             chord_notes = []
@@ -268,7 +276,9 @@ class ProjectManager:
                     [
                         index,
                         str(
-                            pychord.find_chords_from_notes(formatted_pitch_names)[0]
+                            pychord.find_chords_from_notes(
+                                formatted_pitch_names
+                                )[0]
                         ).replace("-", "b"),
                         temp_chord,
                         self.get_key(),
@@ -283,7 +293,8 @@ class ProjectManager:
         for num in range(7):
             temp_chord = chord.Chord(
                 roman.RomanNumeral(
-                    f"{numerals[num]}[add4][no3]", self.get_key(), caseMatters=False
+                    f"{numerals[num]}[add4][no3]", self.get_key(),
+                    caseMatters=False
                 )
             )
             scale_notes = []
@@ -325,7 +336,9 @@ class ProjectManager:
                     [
                         index,
                         str(
-                            pychord.find_chords_from_notes(formatted_pitch_names)[0]
+                            pychord.find_chords_from_notes(
+                                formatted_pitch_names
+                            )[0]
                         ).replace("-", "b"),
                         temp_chord,
                         self.get_key(),
@@ -382,7 +395,9 @@ class ProjectManager:
                     [
                         index,
                         str(
-                            pychord.find_chords_from_notes(formatted_pitch_names)[0]
+                            pychord.find_chords_from_notes(
+                                formatted_pitch_names
+                            )[0]
                         ).replace("-", "b"),
                         temp_chord,
                         self.get_key(),
@@ -412,7 +427,9 @@ class ProjectManager:
                     text=i[1], fg_color="#AFB5C7", state="normal"
                 )
                 if len(i[1]) > 5:
-                    self.chord_buttons[i[0]].configure(font=("./assets/Inter.ttf", 11))
+                    self.chord_buttons[i[0]].configure(
+                        font=("./assets/Inter.ttf", 11)
+                    )
 
     def reset_timeline(self, timeline_frame):
         prompt = CTkMessagebox(
@@ -504,7 +521,8 @@ class App(CTk):
         self.sidebar_frame.grid(row=0, column=0, rowspan=5, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(5, weight=1)
         self.center_frame = CTkFrame(self, width=636, corner_radius=0)
-        self.center_frame.grid(row=0, column=1, rowspan=4, padx=2, sticky="nsew")
+        self.center_frame.grid(row=0, column=1, rowspan=4, padx=2,
+                               sticky="nsew")
         self.center_frame.grid_rowconfigure(1, weight=1)
         self.info_frame = CTkFrame(self, width=176, corner_radius=0)
         self.info_frame.grid(row=0, column=2, rowspan=4, sticky="nsew")
@@ -578,7 +596,8 @@ class App(CTk):
             self.tabs.tab("Palette"), width=544, height=32, fg_color="#ECECED"
         )
         self.palette_menu_bar.grid_columnconfigure(2, weight=1)
-        self.palette_menu_bar.grid(row=0, column=0, padx=(16, 8), pady=8, sticky="ew")
+        self.palette_menu_bar.grid(row=0, column=0, padx=(16, 8), pady=8,
+                                   sticky="ew")
         self.palette_frame = CTkFrame(
             self.tabs.tab("Palette"), width=552, height=40, fg_color="#ECECED"
         )
@@ -594,7 +613,8 @@ class App(CTk):
         self.chord_button_menu = CTkFrame(
             self.tabs.tab("Palette"), width=560, height=192, fg_color="#ECECED"
         )
-        self.chord_button_menu.grid(row=1, column=0, rowspan=4, columnspan=7, padx=8)
+        self.chord_button_menu.grid(row=1, column=0, rowspan=4, columnspan=7,
+                                    padx=8)
 
         # Timeline
 
