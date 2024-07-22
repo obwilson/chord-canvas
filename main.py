@@ -5,7 +5,7 @@ from music21 import *
 import pychord
 import numpy
 
-set_appearance_mode("System")
+set_appearance_mode("Light")
 set_default_color_theme("./assets/theme.json")
 
 DEFAULT_TONIC = "C"
@@ -86,8 +86,8 @@ class ProjectManager:
         self.instrument_menu = CTkOptionMenu(
             playback_frame, width=120, height=32, values=["Piano", "Guitar", "8bit"]
         )
-        self.tempo_menu = CTkButton(
-            playback_frame, text=f"{120}bpm", width=80, height=32
+        self.tempo_menu = CTkEntry(
+            playback_frame, width=80, height=32, fg_color="#AFB5C7", text_color="#0E0E0E"
         )
 
         # Create buttons
@@ -105,8 +105,7 @@ class ProjectManager:
                     height=32,
                 )
                 self.chord_buttons[index].configure(
-                    # command=lambda i=index: self.timeline.append(self.get_chords()[i])
-                    command=lambda i=index: self.create_chord_frame(
+                    command=lambda i=index: self.append_timeline(
                         timeline_frame, self.get_chords()[i]
                     )
                 )
@@ -120,6 +119,7 @@ class ProjectManager:
         self.mode_menu.set(DEFAULT_MODE)
         self.instrument_menu.set(DEFAULT_INSTRUMENT)
         self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
+        self.tempo_menu.insert(0, DEFAULT_TEMPO)
 
         self.timeline = []
         self.chord_frames = []
@@ -437,8 +437,9 @@ class ProjectManager:
                 frame.destroy()
             self.chord_frames = []
 
-    def create_chord_frame(self, master, chord):
+    def append_timeline(self, master, chord):
         print(self.timeline)
+        self.timeline.append(chord)
         self.chord_frames.append(
             CTkFrame(master, width=96, height=64, fg_color="#AFB5C7")
         )
@@ -464,6 +465,14 @@ class ProjectManager:
         )
         self.edit_button.grid(padx=8, pady=(0, 8), row=1)
 
+    def play_timeline(self, stream, timeline, ts, pj_tempo):
+        stream.append(meter.TimeSignature(ts))
+        for chord in timeline:
+            stream.append(chord[2])
+
+        sp = midi.realtime.StreamPlayer(stream)
+        sp.play()
+        # stream.show("midi")
 
 class App(CTk):
     def __init__(self):
@@ -615,6 +624,14 @@ class App(CTk):
             image=self.PLAY_ICON,
             border_spacing=8,
         )
+        self.play_button.configure(
+            command=lambda: self.manager.play_timeline(
+                stream.Stream(),
+                self.manager.timeline,
+                self.manager.get_time_signature(),
+                self.manager.get_tempo(),
+            )
+        )
         self.play_button.grid(row=0, column=0, padx=8, pady=8)
         self.pause_button = CTkButton(
             self.playback_frame,
@@ -654,7 +671,7 @@ class App(CTk):
         self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
     def loop(self):
-        print(self.manager.timeline)
+        # print(self.manager.timeline)
         self.after(100, self.loop)
 
 
