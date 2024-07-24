@@ -128,7 +128,7 @@ class ProjectManager:
         self.timeline = []
         self.chord_frames = []
 
-    def on_tonic_mode_selected(self):
+    def on_tonic_mode_selected(self, option):
         self.set_chords()
 
     def get_tonic(self):
