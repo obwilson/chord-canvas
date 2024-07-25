@@ -482,7 +482,7 @@ class ProjectManager:
         )
         self.edit_button.grid(padx=8, pady=(0, 8), row=1)
 
-    def play_timeline(self, stream, timeline, ts, pj_tempo):
+    def play_timeline(self, stream, timeline, ts):
         stream.append(meter.TimeSignature(ts))
         for chord in timeline:
             stream.append(chord[2])
@@ -490,6 +490,9 @@ class ProjectManager:
         sp = midi.realtime.StreamPlayer(stream)
         sp.play()
         # stream.show("midi")
+
+    def edit_chord(self, master, chord):
+        edit_window = CTkToplevel()
 
 class App(CTk):
     def __init__(self):
