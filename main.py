@@ -228,7 +228,7 @@ class ProjectManager:
                     ]
                 )
             else:
-                chords.append([index, "", None])
+                chords.append([index, "", None, self.get_key(), []])
 
             index += 1
 
@@ -287,7 +287,7 @@ class ProjectManager:
                     ]
                 )
             else:
-                chords.append([index, "", None])
+                chords.append([index, "", None, self.get_key(), []])
 
             index += 1
 
@@ -348,7 +348,7 @@ class ProjectManager:
                     ]
                 )
             else:
-                chords.append([index, "", None])
+                chords.append([index, "", None, self.get_key(), []])
 
             index += 1
 
@@ -408,7 +408,7 @@ class ProjectManager:
                     ]
                 )
             else:
-                chords.append([index, "", None])
+                chords.append([index, "", None, self.get_key(), []])
 
             index += 1
 
@@ -434,6 +434,15 @@ class ProjectManager:
                     self.chord_buttons[i[0]].configure(
                         font=("./assets/Inter.ttf", 11)
                     )
+
+    def replace_chord(self, chord_name, position):
+        print(chord_name)
+        print(pychord.chord.Chord(chord_name).components())
+        # new_chord = chord.Chord(
+        #     pychord.chord.Chord(chord_name)
+        # )
+
+        # print(new_chord)
 
     def reset_timeline(self, timeline_frame):
         prompt = CTkMessagebox(
@@ -483,7 +492,7 @@ class ProjectManager:
             text="Edit",
             font=CTkFont("./assets/Inter.ttf", size=12),
             corner_radius=8,
-            command=lambda: self.chord_window(chord)
+            command=lambda: self.chord_window(chord, self.chord_frames[-1])
         )
         self.edit_button.grid(padx=8, pady=(0, 8), row=1)
 
@@ -503,7 +512,27 @@ class ProjectManager:
 
         stream.write("midi", "./exported/new_project.mid")
 
-    def chord_window(self, chord):
+    def chord_window(self, chord, position):
+        qualities = {
+            "Major" : "",
+            "Minor" : "m",
+            "7th" : "7",
+            "Major 7th" : "M7",
+            "Minor 7th" : "m7",
+            "Suspended 2nd" : "sus2",
+            "Suspended 4th" : "sus4",
+        }
+
+        palette_qualities = {
+            "" : "Major",
+            "m" : "Minor",
+            "7" : "7th",
+            "M7" : "Major 7th",
+            "m7" : "Minor 7th",
+            "sus2" : "Suspended 2nd",
+            "sus4" : "Suspended 4th",
+        }
+
         edit_window = CTkToplevel()
         edit_window.title("Edit Chord")
         edit_window.geometry("288x224")
@@ -534,28 +563,52 @@ class ProjectManager:
                 "B",
             ],
         )
-        root_menu.set(chord[4][0])
-        root_menu.pack()
+        root_menu.set(str(chord[4][0]))
+        root_menu.grid(padx=(16, 8), pady=16, row=0, column=0)
 
         quality_menu = CTkOptionMenu(
             edit_window,
             width=64,
             height=32,
             values=[
-                "major",
-                "minor",
-                "7",
-                "M7"
-                "m7",
-                "sus2",
-                "sus4",
-            ],
+                "Major",
+                "Minor",
+                "7th",
+                "Major 7th",
+                "Minor 7th",
+                "Suspended 2nd",
+                "Suspended 4th",
+            ]
         )
-        quality_menu = CTkLabel(
+        quality_menu.set(
+            palette_qualities[str(pychord.chord.Chord(
+                str(
+                    pychord.find_chords_from_notes(chord[4])[0]
+                ).replace("-", "b")
+            ).quality)]
+        )
+        quality_menu.grid(padx=(0, 16), pady=16, row=0, column=1)
+
+        cancel_button = CTkButton(
             edit_window,
-            text=pychord.chord.Chord(str(pychord.find_chords_from_notes(chord[4])[0]).replace("-", "b")).quality
+            width=64,
+            height=32,
+            text="Cancel",
+            command=lambda: edit_window.destroy()
         )
-        quality_menu.pack()
+        cancel_button.grid(padx=16, pady=16, row=1, column=0)
+
+        confirm_button = CTkButton(
+            edit_window,
+            width=64,
+            height=32,
+            text="Confirm",
+            command=lambda: self.replace_chord(
+                str(root_menu.get() + qualities[quality_menu.get()]),
+                position,
+            )
+        )
+        confirm_button.grid(padx=16, pady=16, row=1, column=1)
 
 class App(CTk):
     def __init__(self):
