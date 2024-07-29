@@ -224,6 +224,7 @@ class ProjectManager:
                         ).replace("-", "b"),
                         temp_chord,
                         self.get_key(),
+                        formatted_pitch_names,
                     ]
                 )
             else:
@@ -282,6 +283,7 @@ class ProjectManager:
                         ).replace("-", "b"),
                         temp_chord,
                         self.get_key(),
+                        formatted_pitch_names,
                     ]
                 )
             else:
@@ -342,6 +344,7 @@ class ProjectManager:
                         ).replace("-", "b"),
                         temp_chord,
                         self.get_key(),
+                        formatted_pitch_names,
                     ]
                 )
             else:
@@ -401,6 +404,7 @@ class ProjectManager:
                         ).replace("-", "b"),
                         temp_chord,
                         self.get_key(),
+                        formatted_pitch_names,
                     ]
                 )
             else:
@@ -479,6 +483,7 @@ class ProjectManager:
             text="Edit",
             font=CTkFont("./assets/Inter.ttf", size=12),
             corner_radius=8,
+            command=lambda: self.chord_window(chord)
         )
         self.edit_button.grid(padx=8, pady=(0, 8), row=1)
 
@@ -491,8 +496,66 @@ class ProjectManager:
         sp.play()
         # stream.show("midi")
 
-    def edit_chord(self, master, chord):
+    def export_timeline(self, stream, timeline, ts):
+        stream.append(meter.TimeSignature(ts))
+        for chord in timeline:
+            stream.append(chord[2])
+
+        stream.write("midi", "./exported/new_project.mid")
+
+    def chord_window(self, chord):
         edit_window = CTkToplevel()
+        edit_window.title("Edit Chord")
+        edit_window.geometry("288x224")
+        edit_window.attributes('-topmost', 'true')
+        print(chord)
+
+        root_menu = CTkOptionMenu(
+            edit_window,
+            width=64,
+            height=32,
+            values=[
+                "C",
+                "C#",
+                "Db",
+                "D",
+                "D#",
+                "Eb",
+                "E",
+                "F",
+                "F#",
+                "Gb",
+                "G",
+                "G#",
+                "Ab",
+                "A",
+                "A#",
+                "Bb",
+                "B",
+            ],
+        )
+        root_menu.set(chord[4][0])
+        root_menu.pack()
+
+        quality_menu = CTkOptionMenu(
+            edit_window,
+            width=64,
+            height=32,
+            values=[
+                "major",
+                "minor",
+                "7",
+                "M7"
+                "m7",
+                "sus2",
+                "sus4",
+            ],
+        )
+        quality_menu = CTkLabel(
+            edit_window,
+            text=pychord.chord.Chord(str(pychord.find_chords_from_notes(chord[4])[0]).replace("-", "b")).quality
+        )
+        quality_menu.pack()
 
 class App(CTk):
     def __init__(self):
@@ -571,6 +634,11 @@ class App(CTk):
             text="Export",
             fg_color="#ECECED",
             hover_color="#AFB5C7",
+            command=lambda: self.manager.export_timeline(
+                stream.Stream(),
+                self.manager.timeline,
+                self.manager.get_time_signature(),
+            )
         )
         self.export_button.grid(row=4, column=0, padx=16, pady=8)
         self.settings_button = CTkButton(
@@ -652,7 +720,6 @@ class App(CTk):
                 stream.Stream(),
                 self.manager.timeline,
                 self.manager.get_time_signature(),
-                self.manager.get_tempo(),
             )
         )
         self.play_button.grid(row=0, column=0, padx=8, pady=8)
