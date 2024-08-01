@@ -127,6 +127,7 @@ class ProjectManager:
 
         self.timeline = []
         self.chord_frames = []
+        self.chord_labels = []
 
     def on_tonic_mode_selected(self, option):
         self.set_chords()
@@ -408,6 +409,8 @@ class ProjectManager:
             old_chord[5]
         ] 
 
+        self.chord_labels[old_chord[5]].configure(text=chord_name)
+
 
     def reset_timeline(self, timeline_frame):
         prompt = CTkMessagebox(
@@ -440,15 +443,17 @@ class ProjectManager:
         )
         self.chord_frames[-1].grid_propagate(False)
         self.chord_frames[-1].pack(padx=8, pady=8, side=LEFT)
-        self.label = CTkLabel(
-            self.chord_frames[-1],
-            text=chord[1],
-            font=CTkFont("./assets/Inter.ttf", size=16),
-            width=80,
-            height=40,
-            corner_radius=8,
+        self.chord_labels.append(
+            CTkLabel(
+                self.chord_frames[-1],
+                text=chord[1],
+                font=CTkFont("./assets/Inter.ttf", size=16),
+                width=80,
+                height=40,
+                corner_radius=8,
+            )
         )
-        self.label.grid(padx=8, row=0)
+        self.chord_labels[-1].grid(padx=8, row=0)
         self.edit_button = CTkButton(
             self.chord_frames[-1],
             width=80,
@@ -568,12 +573,15 @@ class ProjectManager:
             width=64,
             height=32,
             text="Confirm",
-            command=lambda: self.replace_chord(
+            command=lambda: [
+                self.replace_chord(
                     chord,
                     root_menu.get(),
                     qualities[quality_menu.get()]
-                )
-            )
+                ),
+                edit_window.destroy()
+            ]
+        )
         confirm_button.grid(padx=16, pady=16, row=1, column=1)
 
 class App(CTk):
