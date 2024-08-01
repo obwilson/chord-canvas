@@ -168,6 +168,31 @@ class ProjectManager:
             6: "vii",
             7: "viii",
         }
+
+        replace_signs = {
+            "♮": "",
+            "♭": "b",
+            "♯": "#",
+            "E#": "F",
+            "B#": "C",
+            "Fb": "E",
+            "Cb": "B",
+            "A𝄪": "B",
+            "B𝄪": "C#",
+            "C𝄪": "D",
+            "D𝄪": "E",
+            "E𝄪": "F#",
+            "F𝄪": "G",
+            "G𝄪": "A",
+            "A𝄫": "G",
+            "B𝄫": "A",
+            "C𝄫": "Bb",
+            "D𝄫": "C",
+            "E𝄫": "D",
+            "F𝄫": "Eb",
+            "G𝄫": "F"
+        }
+
         chords = []
         index = 0
 
@@ -187,29 +212,12 @@ class ProjectManager:
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
-                formatted_pitch_names.append(
-                    pitch.unicodeName.replace("♮", "")
-                    .replace("♭", "b")
-                    .replace("♯", "#")
-                    .replace("E#", "F")
-                    .replace("B#", "C")
-                    .replace("Fb", "E")
-                    .replace("Cb", "B")
-                    .replace("A𝄪", "B")
-                    .replace("B𝄪", "C#")
-                    .replace("C𝄪", "D")
-                    .replace("D𝄪", "E")
-                    .replace("E𝄪", "F#")
-                    .replace("F𝄪", "G")
-                    .replace("G𝄪", "A")
-                    .replace("A𝄫", "G")
-                    .replace("B𝄫", "A")
-                    .replace("C𝄫", "Bb")
-                    .replace("D𝄫", "C")
-                    .replace("E𝄫", "D")
-                    .replace("F𝄫", "Eb")
-                    .replace("G𝄫", "F")
-                )
+
+                formatted_name = pitch.unicodeName
+                for original, replacement in replace_signs.items():
+                    formatted_name = formatted_name.replace(original, replacement)
+                
+                formatted_pitch_names.append(formatted_name)
 
             if not numpy.setdiff1d(
                 chord_notes, scale_notes
@@ -225,10 +233,11 @@ class ProjectManager:
                         temp_chord,
                         self.get_key(),
                         formatted_pitch_names,
+                        len(self.timeline),
                     ]
                 )
             else:
-                chords.append([index, "", None, self.get_key(), []])
+                chords.append([len(self.timeline), "", None, self.get_key(), []])
 
             index += 1
 
@@ -246,29 +255,11 @@ class ProjectManager:
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
-                formatted_pitch_names.append(
-                    pitch.unicodeName.replace("♮", "")
-                    .replace("♭", "b")
-                    .replace("♯", "#")
-                    .replace("E#", "F")
-                    .replace("B#", "C")
-                    .replace("Fb", "E")
-                    .replace("Cb", "B")
-                    .replace("A𝄪", "B")
-                    .replace("B𝄪", "C#")
-                    .replace("C𝄪", "D")
-                    .replace("D𝄪", "E")
-                    .replace("E𝄪", "F#")
-                    .replace("F𝄪", "G")
-                    .replace("G𝄪", "A")
-                    .replace("A𝄫", "G")
-                    .replace("B𝄫", "A")
-                    .replace("C𝄫", "Bb")
-                    .replace("D𝄫", "C")
-                    .replace("E𝄫", "D")
-                    .replace("F𝄫", "Eb")
-                    .replace("G𝄫", "F")
-                )
+                formatted_name = pitch.unicodeName
+                for original, replacement in replace_signs.items():
+                    formatted_name = formatted_name.replace(original, replacement)
+                
+                formatted_pitch_names.append(formatted_name)
 
             if not numpy.setdiff1d(
                 chord_notes, scale_notes
@@ -284,6 +275,7 @@ class ProjectManager:
                         temp_chord,
                         self.get_key(),
                         formatted_pitch_names,
+                        len(self.timeline),
                     ]
                 )
             else:
@@ -307,29 +299,11 @@ class ProjectManager:
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
-                formatted_pitch_names.append(
-                    pitch.unicodeName.replace("♮", "")
-                    .replace("♭", "b")
-                    .replace("♯", "#")
-                    .replace("E#", "F")
-                    .replace("B#", "C")
-                    .replace("Fb", "E")
-                    .replace("Cb", "B")
-                    .replace("A𝄪", "B")
-                    .replace("B𝄪", "C#")
-                    .replace("C𝄪", "D")
-                    .replace("D𝄪", "E")
-                    .replace("E𝄪", "F#")
-                    .replace("F𝄪", "G")
-                    .replace("G𝄪", "A")
-                    .replace("A𝄫", "G")
-                    .replace("B𝄫", "A")
-                    .replace("C𝄫", "Bb")
-                    .replace("D𝄫", "C")
-                    .replace("E𝄫", "D")
-                    .replace("F𝄫", "Eb")
-                    .replace("G𝄫", "F")
-                )
+                formatted_name = pitch.unicodeName
+                for original, replacement in replace_signs.items():
+                    formatted_name = formatted_name.replace(original, replacement)
+                
+                formatted_pitch_names.append(formatted_name)
 
             if not numpy.setdiff1d(
                 chord_notes, scale_notes
@@ -345,6 +319,7 @@ class ProjectManager:
                         temp_chord,
                         self.get_key(),
                         formatted_pitch_names,
+                        len(self.timeline),
                     ]
                 )
             else:
@@ -367,29 +342,11 @@ class ProjectManager:
                 scale_notes.append(pitch.unicodeName)
             for pitch in temp_chord.pitches:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
-                formatted_pitch_names.append(
-                    pitch.unicodeName.replace("♮", "")
-                    .replace("♭", "b")
-                    .replace("♯", "#")
-                    .replace("E#", "F")
-                    .replace("B#", "C")
-                    .replace("Fb", "E")
-                    .replace("Cb", "B")
-                    .replace("A𝄪", "B")
-                    .replace("B𝄪", "C#")
-                    .replace("C𝄪", "D")
-                    .replace("D𝄪", "E")
-                    .replace("E𝄪", "F#")
-                    .replace("F𝄪", "G")
-                    .replace("G𝄪", "A")
-                    .replace("A𝄫", "G")
-                    .replace("B𝄫", "A")
-                    .replace("C𝄫", "Bb")
-                    .replace("D𝄫", "C")
-                    .replace("E𝄫", "D")
-                    .replace("F𝄫", "Eb")
-                    .replace("G𝄫", "F")
-                )
+                formatted_name = pitch.unicodeName
+                for original, replacement in replace_signs.items():
+                    formatted_name = formatted_name.replace(original, replacement)
+                
+                formatted_pitch_names.append(formatted_name)
 
             if not numpy.setdiff1d(
                 chord_notes, scale_notes
@@ -405,6 +362,7 @@ class ProjectManager:
                         temp_chord,
                         self.get_key(),
                         formatted_pitch_names,
+                        len(self.timeline),
                     ]
                 )
             else:
@@ -435,14 +393,21 @@ class ProjectManager:
                         font=("./assets/Inter.ttf", 11)
                     )
 
-    def replace_chord(self, chord_name, position):
-        print(chord_name)
-        print(pychord.chord.Chord(chord_name).components())
-        # new_chord = chord.Chord(
-        #     pychord.chord.Chord(chord_name)
-        # )
+    def replace_chord(self, old_chord, root, quality):
+        chord_name = root + quality
+        new_chord = chord.Chord(
+            pychord.chord.Chord(chord_name).components()
+        )
 
-        # print(new_chord)
+        self.timeline[old_chord[5]] = [
+            old_chord[0],
+            chord_name,
+            new_chord,
+            old_chord[3],
+            pychord.chord.Chord(chord_name).components(),
+            old_chord[5]
+        ] 
+
 
     def reset_timeline(self, timeline_frame):
         prompt = CTkMessagebox(
@@ -492,7 +457,7 @@ class ProjectManager:
             text="Edit",
             font=CTkFont("./assets/Inter.ttf", size=12),
             corner_radius=8,
-            command=lambda: self.chord_window(chord, self.chord_frames[-1])
+            command=lambda: self.chord_window(chord)
         )
         self.edit_button.grid(padx=8, pady=(0, 8), row=1)
 
@@ -512,12 +477,12 @@ class ProjectManager:
 
         stream.write("midi", "./exported/new_project.mid")
 
-    def chord_window(self, chord, position):
+    def chord_window(self, chord):
         qualities = {
             "Major" : "",
             "Minor" : "m",
             "7th" : "7",
-            "Major 7th" : "M7",
+            "Major 7th" : "maj7",
             "Minor 7th" : "m7",
             "Suspended 2nd" : "sus2",
             "Suspended 4th" : "sus4",
@@ -604,10 +569,11 @@ class ProjectManager:
             height=32,
             text="Confirm",
             command=lambda: self.replace_chord(
-                str(root_menu.get() + qualities[quality_menu.get()]),
-                position,
+                    chord,
+                    root_menu.get(),
+                    qualities[quality_menu.get()]
+                )
             )
-        )
         confirm_button.grid(padx=16, pady=16, row=1, column=1)
 
 class App(CTk):
@@ -814,7 +780,6 @@ class App(CTk):
         self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
     def loop(self):
-        # print(self.manager.timeline)
         self.after(100, self.loop)
 
 
