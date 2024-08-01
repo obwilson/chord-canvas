@@ -11,7 +11,6 @@ set_default_color_theme("./assets/theme.json")
 DEFAULT_TONIC = "C"
 DEFAULT_MODE = "Major"
 DEFAULT_INSTRUMENT = "Piano"
-DEFAULT_TEMPO = 120
 DEFAULT_TIME_SIGNATURE = "4/4"
 
 
@@ -88,10 +87,6 @@ class ProjectManager:
             playback_frame, width=120, height=32,
             values=["Piano", "Guitar", "8bit"]
         )
-        self.tempo_menu = CTkEntry(
-            playback_frame, width=80, height=32, fg_color="#AFB5C7",
-            text_color="#0E0E0E"
-        )
 
         # Create buttons
 
@@ -123,7 +118,6 @@ class ProjectManager:
         self.mode_menu.set(DEFAULT_MODE)
         self.instrument_menu.set(DEFAULT_INSTRUMENT)
         self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
-        self.tempo_menu.insert(0, DEFAULT_TEMPO)
 
         self.timeline = []
         self.chord_frames = []
@@ -151,9 +145,6 @@ class ProjectManager:
 
     def get_time_signature(self):
         return self.time_signature_menu.get()
-
-    def get_tempo(self):
-        return self.tempo_menu.get()
 
     def get_instrument(self):
         return self.instrument_menu.get()
@@ -491,6 +482,7 @@ class ProjectManager:
             "Minor 7th" : "m7",
             "Suspended 2nd" : "sus2",
             "Suspended 4th" : "sus4",
+            "9th" : "9",
         }
 
         palette_qualities = {
@@ -501,6 +493,7 @@ class ProjectManager:
             "m7" : "Minor 7th",
             "sus2" : "Suspended 2nd",
             "sus4" : "Suspended 4th",
+            "9" : "9th",
         }
 
         edit_window = CTkToplevel()
@@ -548,6 +541,7 @@ class ProjectManager:
                 "Minor 7th",
                 "Suspended 2nd",
                 "Suspended 4th",
+                "9th"
             ]
         )
         quality_menu.set(
@@ -601,9 +595,6 @@ class App(CTk):
         self.PLAY_ICON = CTkImage(
             light_image=Image.open("./assets/icons/play.png"), size=(16, 16)
         )
-        self.PAUSE_ICON = CTkImage(
-            light_image=Image.open("./assets/icons/pause.png"), size=(16, 16)
-        )
         self.RESET_ICON = CTkImage(
             light_image=Image.open("./assets/icons/reset.png"), size=(16, 16)
         )
@@ -619,7 +610,6 @@ class App(CTk):
         self.center_frame.grid_rowconfigure(1, weight=1)
         self.info_frame = CTkFrame(self, width=176, corner_radius=0)
         self.info_frame.grid(row=0, column=2, rowspan=4, sticky="nsew")
-        self.info_frame.grid_rowconfigure(5, weight=1)
 
         # Sidebar
 
@@ -668,15 +658,6 @@ class App(CTk):
             )
         )
         self.export_button.grid(row=4, column=0, padx=16, pady=8)
-        self.settings_button = CTkButton(
-            self.sidebar_frame,
-            width=112,
-            height=32,
-            text="Settings",
-            fg_color="#ECECED",
-            hover_color="#AFB5C7",
-        )
-        self.settings_button.grid(row=6, column=0, padx=16, pady=16)
 
         # Tabs
 
@@ -700,13 +681,6 @@ class App(CTk):
             self.tabs.tab("Palette"), width=552, height=40, fg_color="#ECECED"
         )
         self.palette_frame.grid(row=1, column=0, padx=8)
-        self.modulate_button = CTkButton(
-            self.palette_menu_bar,
-            width=144,
-            height=32,
-            text="Change Key",
-        )
-        self.modulate_button.grid(row=0, column=3, padx=0)
 
         self.chord_button_menu = CTkFrame(
             self.tabs.tab("Palette"), width=560, height=192, fg_color="#ECECED"
@@ -750,15 +724,6 @@ class App(CTk):
             )
         )
         self.play_button.grid(row=0, column=0, padx=8, pady=8)
-        self.pause_button = CTkButton(
-            self.playback_frame,
-            width=32,
-            height=32,
-            text="",
-            image=self.PAUSE_ICON,
-            border_spacing=8,
-        )
-        self.pause_button.grid(row=0, column=1, padx=8, pady=8)
         self.reset_button = CTkButton(
             self.playback_frame,
             width=32,
@@ -784,7 +749,6 @@ class App(CTk):
         self.manager.tonic_menu.grid(row=0, column=0, padx=(0, 8))
         self.manager.mode_menu.grid(row=0, column=1, padx=8)
         self.manager.instrument_menu.grid(row=0, column=3, padx=8, pady=8)
-        self.manager.tempo_menu.grid(row=0, column=5, padx=8, pady=8)
         self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
     def loop(self):
