@@ -10,7 +10,6 @@ set_default_color_theme("./assets/theme.json")
 
 DEFAULT_TONIC = "C"
 DEFAULT_MODE = "Major"
-DEFAULT_INSTRUMENT = "Piano"
 DEFAULT_TIME_SIGNATURE = "4/4"
 
 
@@ -83,10 +82,6 @@ class ProjectManager:
             width=80,
             height=32,
         )
-        self.instrument_menu = CTkOptionMenu(
-            playback_frame, width=120, height=32,
-            values=["Piano", "Guitar", "8bit"]
-        )
 
         # Create buttons
 
@@ -116,7 +111,6 @@ class ProjectManager:
 
         self.tonic_menu.set(DEFAULT_TONIC)
         self.mode_menu.set(DEFAULT_MODE)
-        self.instrument_menu.set(DEFAULT_INSTRUMENT)
         self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
 
         self.timeline = []
@@ -145,9 +139,6 @@ class ProjectManager:
 
     def get_time_signature(self):
         return self.time_signature_menu.get()
-
-    def get_instrument(self):
-        return self.instrument_menu.get()
 
     def get_chords(self):
         numerals = {
@@ -480,6 +471,7 @@ class ProjectManager:
             "7th" : "7",
             "Major 7th" : "maj7",
             "Minor 7th" : "m7",
+            "Minor 7th Flat 5th" : "m7b5",
             "Suspended 2nd" : "sus2",
             "Suspended 4th" : "sus4",
             "9th" : "9",
@@ -491,6 +483,7 @@ class ProjectManager:
             "7" : "7th",
             "M7" : "Major 7th",
             "m7" : "Minor 7th",
+            "m7b5" : "Minor 7th Flat 5th",
             "sus2" : "Suspended 2nd",
             "sus4" : "Suspended 4th",
             "9" : "9th",
@@ -539,6 +532,7 @@ class ProjectManager:
                 "7th",
                 "Major 7th",
                 "Minor 7th",
+                "Minor 7th Flat 5th",
                 "Suspended 2nd",
                 "Suspended 4th",
                 "9th"
@@ -748,7 +742,6 @@ class App(CTk):
 
         self.manager.tonic_menu.grid(row=0, column=0, padx=(0, 8))
         self.manager.mode_menu.grid(row=0, column=1, padx=8)
-        self.manager.instrument_menu.grid(row=0, column=3, padx=8, pady=8)
         self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
     def loop(self):
