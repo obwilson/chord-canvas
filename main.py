@@ -393,6 +393,11 @@ class ProjectManager:
 
         self.chord_labels[old_chord[5]].configure(text=chord_name)
 
+    def delete_chord(self, position):
+        self.chord_frames[position].destroy()
+        self.timeline.pop(position)
+        self.chord_frames.pop(position)
+        
 
     def reset_timeline(self, timeline_frame):
         prompt = CTkMessagebox(
@@ -458,6 +463,13 @@ class ProjectManager:
         # stream.show("midi")
 
     def export_timeline(self, stream, timeline, ts):
+        window = CTkToplevel()
+        window.title("Enter Project Name")
+        window.geometry("288x224")
+        window.attributes('-topmost', 'true')
+
+
+
         stream.append(meter.TimeSignature(ts))
         for chord in timeline:
             stream.append(chord[2])
@@ -493,7 +505,6 @@ class ProjectManager:
         edit_window.title("Edit Chord")
         edit_window.geometry("288x224")
         edit_window.attributes('-topmost', 'true')
-        print(chord)
 
         root_menu = CTkOptionMenu(
             edit_window,
@@ -520,11 +531,11 @@ class ProjectManager:
             ],
         )
         root_menu.set(str(chord[4][0]))
-        root_menu.grid(padx=(16, 8), pady=16, row=0, column=0)
+        root_menu.grid(padx=(16, 8), pady=16, row=0, column=0, sticky="w")
 
         quality_menu = CTkOptionMenu(
             edit_window,
-            width=64,
+            width=164,
             height=32,
             values=[
                 "Major",
@@ -545,7 +556,7 @@ class ProjectManager:
                 ).replace("-", "b")
             ).quality)]
         )
-        quality_menu.grid(padx=(0, 16), pady=16, row=0, column=1)
+        quality_menu.grid(padx=(0, 16), pady=16, row=0, column=1, sticky="w")
 
         cancel_button = CTkButton(
             edit_window,
@@ -554,7 +565,7 @@ class ProjectManager:
             text="Cancel",
             command=lambda: edit_window.destroy()
         )
-        cancel_button.grid(padx=16, pady=16, row=1, column=0)
+        cancel_button.grid(padx=16, pady=0, row=1, column=0, sticky="w")
 
         confirm_button = CTkButton(
             edit_window,
@@ -570,14 +581,26 @@ class ProjectManager:
                 edit_window.destroy()
             ]
         )
-        confirm_button.grid(padx=16, pady=16, row=1, column=1)
+        confirm_button.grid(padx=0, pady=0, row=1, column=1, sticky="w")
+
+        delete_button = CTkButton(
+            edit_window,
+            width=64,
+            height=32,
+            text="Delete",
+            command=lambda: [
+                self.delete_chord(chord[5]),
+                edit_window.destroy()
+            ]
+        )
+        delete_button.grid(padx=0, pady=0, row=1, column=2, sticky="w")
 
 class App(CTk):
     def __init__(self):
         super().__init__()
 
         self.title("Chord Canvas")
-        self.geometry(f"{960}x{624}")
+        self.geometry(f"{768}x{532}")
 
         self.resizable(False, False)
         self.grid_rowconfigure((0, 1, 2), weight=1)
@@ -602,8 +625,6 @@ class App(CTk):
         self.center_frame.grid(row=0, column=1, rowspan=4, padx=2,
                                sticky="nsew")
         self.center_frame.grid_rowconfigure(1, weight=1)
-        self.info_frame = CTkFrame(self, width=176, corner_radius=0)
-        self.info_frame.grid(row=0, column=2, rowspan=4, sticky="nsew")
 
         # Sidebar
 
@@ -659,9 +680,9 @@ class App(CTk):
             self.center_frame, width=576, height=280, fg_color="#ECECED"
         )
         self.tabs._segmented_button.configure(border_width=4)
-        self.tabs.grid(row=0, column=0, padx=30, pady=16, sticky="ew")
+        self.tabs.grid(row=0, column=0, padx=14, pady=8, sticky="ew")
         self.tabs.add("Palette")
-        self.tabs.add("Lyrics")
+        self.tabs.add("Notepad")
 
         # Palette Menu
 
@@ -686,7 +707,7 @@ class App(CTk):
 
         self.timeline_frame = CTkScrollableFrame(
             self.center_frame,
-            width=608,
+            width=576,
             height=96,
             fg_color="#ECECED",
             orientation=HORIZONTAL,
@@ -744,11 +765,15 @@ class App(CTk):
         self.manager.mode_menu.grid(row=0, column=1, padx=8)
         self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
-    def loop(self):
-        self.after(100, self.loop)
+        # Lyrics
+
+        self.notepad = CTkTextbox(
+            self.tabs.tab("Notepad"),
+            corner_radius=8,
+        )
+        self.notepad.grid(sticky="NSEW")
 
 
 app = App()
-app.loop()
 app.manager.set_chords()
 app.mainloop()
