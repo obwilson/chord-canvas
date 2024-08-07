@@ -198,7 +198,10 @@ class ProjectManager:
 
                 formatted_name = pitch.unicodeName
                 for original, replacement in replace_signs.items():
-                    formatted_name = formatted_name.replace(original, replacement)
+                    formatted_name = formatted_name.replace(
+                        original, 
+                        replacement,
+                    )
                 
                 formatted_pitch_names.append(formatted_name)
 
@@ -220,7 +223,9 @@ class ProjectManager:
                     ]
                 )
             else:
-                chords.append([len(self.timeline), "", None, self.get_key(), []])
+                chords.append(
+                    [len(self.timeline), "", None, self.get_key(), []]
+                )
 
             index += 1
 
@@ -240,7 +245,10 @@ class ProjectManager:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
                 formatted_name = pitch.unicodeName
                 for original, replacement in replace_signs.items():
-                    formatted_name = formatted_name.replace(original, replacement)
+                    formatted_name = formatted_name.replace(
+                        original,
+                        replacement,
+                    )
                 
                 formatted_pitch_names.append(formatted_name)
 
@@ -262,7 +270,9 @@ class ProjectManager:
                     ]
                 )
             else:
-                chords.append([index, "", None, self.get_key(), []])
+                chords.append(
+                    [len(self.timeline), "", None, self.get_key(), []]
+                )
 
             index += 1
 
@@ -284,7 +294,10 @@ class ProjectManager:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
                 formatted_name = pitch.unicodeName
                 for original, replacement in replace_signs.items():
-                    formatted_name = formatted_name.replace(original, replacement)
+                    formatted_name = formatted_name.replace(
+                        original,
+                        replacement,
+                    )
                 
                 formatted_pitch_names.append(formatted_name)
 
@@ -306,7 +319,9 @@ class ProjectManager:
                     ]
                 )
             else:
-                chords.append([index, "", None, self.get_key(), []])
+                chords.append(
+                    [len(self.timeline), "", None, self.get_key(), []]
+                )
 
             index += 1
 
@@ -327,7 +342,10 @@ class ProjectManager:
                 chord_notes.append(pitch.unicodeName.replace("♮", ""))
                 formatted_name = pitch.unicodeName
                 for original, replacement in replace_signs.items():
-                    formatted_name = formatted_name.replace(original, replacement)
+                    formatted_name = formatted_name.replace(
+                        original,
+                        replacement,
+                    )
                 
                 formatted_pitch_names.append(formatted_name)
 
@@ -349,7 +367,9 @@ class ProjectManager:
                     ]
                 )
             else:
-                chords.append([index, "", None, self.get_key(), []])
+                chords.append(
+                    [len(self.timeline), "", None, self.get_key(), []]
+                )
 
             index += 1
 
@@ -396,10 +416,12 @@ class ProjectManager:
     def delete_chord(self, position):
         self.chord_frames[position].destroy()
         self.timeline.pop(position)
-        self.chord_frames.pop(position)
 
         for chord in self.timeline[position::]:
             chord[5] -= 1
+        
+        print(self.chord_frames)
+        print(self.timeline)
         
 
     def reset_timeline(self, timeline_frame):
@@ -474,7 +496,11 @@ class ProjectManager:
         for chord in timeline:
             stream.append(chord[2])
 
-        stream.write("midi", f"./exported/{project_name.get_input()}.mid")
+        if project_name.get_input == None:
+            stream.write("midi", f"./exported/untitled_project.mid")
+        else:
+            stream.write("midi", f"./exported/{project_name.get_input()}.mid")
+        
 
     def chord_window(self, chord):
         qualities = {
@@ -769,9 +795,10 @@ class App(CTk):
 
         self.notepad = CTkTextbox(
             self.tabs.tab("Notepad"),
+            width=576,
             corner_radius=8,
         )
-        self.notepad.grid(sticky="NSEW")
+        self.notepad.grid(sticky="nsew")
 
 
 app = App()
