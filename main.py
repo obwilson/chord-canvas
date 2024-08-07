@@ -397,6 +397,9 @@ class ProjectManager:
         self.chord_frames[position].destroy()
         self.timeline.pop(position)
         self.chord_frames.pop(position)
+
+        for chord in self.timeline[position::]:
+            chord[5] -= 1
         
 
     def reset_timeline(self, timeline_frame):
@@ -460,21 +463,18 @@ class ProjectManager:
 
         sp = midi.realtime.StreamPlayer(stream)
         sp.play()
-        # stream.show("midi")
 
     def export_timeline(self, stream, timeline, ts):
-        window = CTkToplevel()
-        window.title("Enter Project Name")
-        window.geometry("288x224")
-        window.attributes('-topmost', 'true')
-
-
+        project_name = CTkInputDialog(
+            title="Export",
+            text="Project Name:"
+        )
 
         stream.append(meter.TimeSignature(ts))
         for chord in timeline:
             stream.append(chord[2])
 
-        stream.write("midi", "./exported/new_project.mid")
+        stream.write("midi", f"./exported/{project_name.get_input()}.mid")
 
     def chord_window(self, chord):
         qualities = {
