@@ -416,6 +416,8 @@ class ProjectManager:
     def delete_chord(self, position):
         self.chord_frames[position].destroy()
         self.timeline.pop(position)
+        self.chord_frames.pop(position)
+        self.chord_labels.pop(position)
 
         for chord in self.timeline[position::]:
             chord[5] -= 1
@@ -446,6 +448,7 @@ class ProjectManager:
             for frame in timeline_frame.winfo_children():
                 frame.destroy()
             self.chord_frames = []
+            self.chord_labels = []
 
     def append_timeline(self, master, chord):
         print(self.timeline)
@@ -529,11 +532,19 @@ class ProjectManager:
 
         edit_window = CTkToplevel()
         edit_window.title("Edit Chord")
-        edit_window.geometry("288x224")
+        edit_window.geometry("288x128")
         edit_window.attributes('-topmost', 'true')
 
-        root_menu = CTkOptionMenu(
+        top_frame = CTkFrame(
             edit_window,
+            width=208,
+            height=32,
+            fg_color="#DFE0E6"
+        )
+        top_frame.grid(padx=8, pady=0, row=0)
+
+        root_menu = CTkOptionMenu(
+            top_frame,
             width=64,
             height=32,
             values=[
@@ -557,10 +568,10 @@ class ProjectManager:
             ],
         )
         root_menu.set(str(chord[4][0]))
-        root_menu.grid(padx=(16, 8), pady=16, row=0, column=0, sticky="w")
+        root_menu.grid(padx=(0, 16), pady=16, row=0, column=0, sticky="w")
 
         quality_menu = CTkOptionMenu(
-            edit_window,
+            top_frame,
             width=164,
             height=32,
             values=[
@@ -582,19 +593,39 @@ class ProjectManager:
                 ).replace("-", "b")
             ).quality)]
         )
-        quality_menu.grid(padx=(0, 16), pady=16, row=0, column=1, sticky="w")
+        quality_menu.grid(padx=0, pady=16, row=0, column=1, sticky="w")
+
+        button_frame = CTkFrame(
+            edit_window,
+            width=208,
+            height=32,
+            fg_color="#DFE0E6"
+        )
+        button_frame.grid(padx=16, pady=16, row=1)
 
         cancel_button = CTkButton(
-            edit_window,
+            button_frame,
             width=64,
             height=32,
             text="Cancel",
             command=lambda: edit_window.destroy()
         )
-        cancel_button.grid(padx=16, pady=0, row=1, column=0, sticky="w")
+        cancel_button.grid(padx=0, pady=0, row=1, column=0, sticky="w")
+
+        delete_button = CTkButton(
+            button_frame,
+            width=64,
+            height=32,
+            text="Delete",
+            command=lambda: [
+                self.delete_chord(chord[5]),
+                edit_window.destroy()
+            ]
+        )
+        delete_button.grid(padx=16, pady=0, row=1, column=1, sticky="w")
 
         confirm_button = CTkButton(
-            edit_window,
+            button_frame,
             width=64,
             height=32,
             text="Confirm",
@@ -607,19 +638,8 @@ class ProjectManager:
                 edit_window.destroy()
             ]
         )
-        confirm_button.grid(padx=0, pady=0, row=1, column=1, sticky="w")
+        confirm_button.grid(padx=0, pady=0, row=1, column=2, sticky="w")
 
-        delete_button = CTkButton(
-            edit_window,
-            width=64,
-            height=32,
-            text="Delete",
-            command=lambda: [
-                self.delete_chord(chord[5]),
-                edit_window.destroy()
-            ]
-        )
-        delete_button.grid(padx=0, pady=0, row=1, column=2, sticky="w")
 
 class App(CTk):
     def __init__(self):
