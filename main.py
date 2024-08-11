@@ -1,4 +1,5 @@
 from customtkinter import *
+from customtkinter import filedialog
 from CTkMessagebox import *
 from PIL import Image
 from music21 import *
@@ -16,7 +17,7 @@ DEFAULT_TIME_SIGNATURE = "4/4"
 class ProjectManager:
     def __init__(
         self, FONT, palette_menu_bar, chord_button_menu, playback_frame,
-        timeline_frame
+        timeline_frame,
     ):
         # Create menus
 
@@ -132,10 +133,6 @@ class ProjectManager:
     def get_scale(self):
         self.key = key.Key(self.tonic_menu.get(), self.mode_menu.get())
         return self.key.getScale()
-
-    def get_relative(self):
-        self.key = key.Key(self.tonic_menu.get(), self.mode_menu.get())
-        return self.key.relative
 
     def get_time_signature(self):
         return self.time_signature_menu.get()
@@ -490,19 +487,20 @@ class ProjectManager:
         sp.play()
 
     def export_timeline(self, stream, timeline, ts):
-        project_name = CTkInputDialog(
-            title="Export",
-            text="Project Name:"
-        )
 
         stream.append(meter.TimeSignature(ts))
         for chord in timeline:
             stream.append(chord[2])
 
-        if project_name.get_input == None:
-            stream.write("midi", f"./exported/untitled_project.mid")
-        else:
-            stream.write("midi", f"./exported/{project_name.get_input()}.mid")
+        file_path = filedialog.asksaveasfile(
+            defaultextension=".midi",
+            filetypes=[
+                ("MIDI file","*.midi"),
+            ]
+        )
+
+        if file_path:
+            stream.write("midi", file_path.name)
         
 
     def chord_window(self, chord):
@@ -640,6 +638,23 @@ class ProjectManager:
         )
         confirm_button.grid(padx=0, pady=0, row=1, column=2, sticky="w")
 
+    def save_project(self, notepad):
+        project = [
+            self.get_key(),
+            self.get_time_signature(),
+            self.timeline,
+            notepad.get(1.0, END),
+        ]
+
+        file_path = filedialog.asksaveasfile(
+            defaultextension=".ccnvs",
+            filetypes=[
+                ("Chord Canvas Project","*.ccnvs"),
+            ]
+        )
+
+        if file_path:
+            file_path.write(str(project))
 
 class App(CTk):
     def __init__(self):
@@ -703,6 +718,7 @@ class App(CTk):
             text="Save",
             fg_color="#ECECED",
             hover_color="#AFB5C7",
+            command=lambda: self.manager.save_project(self.notepad)
         )
         self.save_button.grid(row=3, column=0, padx=16, pady=8)
         self.export_button = CTkButton(
