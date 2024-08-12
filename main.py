@@ -139,6 +139,7 @@ class ProjectManager:
         return self.time_signature_menu.get()
 
     def get_chords(self):
+        ## Read key and create/validate chords
         numerals = {
             0: "i",
             1: "ii",
@@ -221,6 +222,7 @@ class ProjectManager:
                     ]
                 )
             else:
+                # Append empty chord if invalid (Error prevention)
                 chords.append(
                     [len(self.timeline), "", None, self.get_key(), []]
                 )
@@ -268,6 +270,7 @@ class ProjectManager:
                     ]
                 )
             else:
+                # Append empty chord if invalid (Error prevention)
                 chords.append(
                     [len(self.timeline), "", None, self.get_key(), []]
                 )
@@ -317,6 +320,7 @@ class ProjectManager:
                     ]
                 )
             else:
+                # Append empty chord if invalid (Error prevention)
                 chords.append(
                     [len(self.timeline), "", None, self.get_key(), []]
                 )
@@ -365,6 +369,7 @@ class ProjectManager:
                     ]
                 )
             else:
+                # Append empty chord if invalid (Error prevention)
                 chords.append(
                     [len(self.timeline), "", None, self.get_key(), []]
                 )
@@ -374,6 +379,7 @@ class ProjectManager:
         return chords
 
     def set_chords(self):
+        ## Change chord button text and disable if not in key
         chords = self.get_chords()
 
         for i in self.chord_buttons:
@@ -395,6 +401,7 @@ class ProjectManager:
                     )
 
     def replace_chord(self, old_chord, root, quality):
+        ## Replace chord in timeline
         chord_name = root + quality
         new_chord = chord.Chord(
             pychord.chord.Chord(chord_name).components()
@@ -412,6 +419,7 @@ class ProjectManager:
         self.chord_labels[old_chord[5]].configure(text=chord_name)
 
     def delete_chord(self, position):
+        ## Delete chord in timeline and adjust indexes of the timeline
         self.chord_frames[position].destroy()
         self.timeline.pop(position)
         self.chord_frames.pop(position)
@@ -425,6 +433,7 @@ class ProjectManager:
         
 
     def reset_timeline(self, timeline_frame):
+        ## Reset timeline and frames
         prompt = CTkMessagebox(
             width=176,
             height=128,
@@ -449,6 +458,7 @@ class ProjectManager:
             self.chord_labels = []
 
     def append_timeline(self, master, chord):
+        ## Add frame with chord info into timeline
         print(self.timeline)
         self.timeline.append(chord)
         self.chord_frames.append(
@@ -480,6 +490,7 @@ class ProjectManager:
         self.edit_button.grid(padx=8, pady=(0, 8), row=1)
 
     def play_timeline(self, stream, timeline, ts):
+        ## Compile timeline into music21 stream and play using pygame
         stream.append(meter.TimeSignature(ts))
         for chord in timeline:
             stream.append(chord[2])
@@ -488,7 +499,7 @@ class ProjectManager:
         sp.play()
 
     def export_timeline(self, stream, timeline, ts):
-
+        ## Compile timeline into music21 stream and export MIDI file
         stream.append(meter.TimeSignature(ts))
         for chord in timeline:
             stream.append(chord[2])
@@ -505,6 +516,7 @@ class ProjectManager:
         
 
     def chord_window(self, chord):
+        ## Open chord edit window
         qualities = {
             "Major" : "",
             "Minor" : "m",
@@ -642,6 +654,7 @@ class ProjectManager:
         confirm_button.grid(padx=0, pady=0, row=1, column=2, sticky="w")
 
     def save_project(self, notepad):
+        ## Compile project into list and encode into binary file
         project = [
             self.get_tonic(),
             self.get_mode(),
@@ -658,9 +671,11 @@ class ProjectManager:
         )
 
         if file_path:
+            # Create binary file
             pickle.dump(project, open(file_path, "wb"))
     
     def load_project(self, timeline_frame, notepad):
+        ## Load .ccnvs binary file and change values according to project list
         file_path = filedialog.askopenfilename(
             defaultextension=".ccnvs",
             filetypes=[
@@ -669,6 +684,7 @@ class ProjectManager:
         )
 
         if file_path:
+            # Read binary file
             project = pickle.load(open(file_path, "rb"))
 
             for frame in self.chord_frames:
@@ -688,6 +704,7 @@ class ProjectManager:
                 self.append_timeline(timeline_frame, chord)
             
     def new_project(self, notepad):
+        ## Ask confirmation then set project to default settings
         prompt = CTkMessagebox(
             width=176,
             height=128,
