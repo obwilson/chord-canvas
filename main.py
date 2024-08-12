@@ -5,6 +5,7 @@ from PIL import Image
 from music21 import *
 import pychord
 import numpy
+import pickle
 
 set_appearance_mode("Light")
 set_default_color_theme("./assets/theme.json")
@@ -640,13 +641,14 @@ class ProjectManager:
 
     def save_project(self, notepad):
         project = [
-            self.get_key(),
+            self.get_tonic(),
+            self.get_mode(),
             self.get_time_signature(),
             self.timeline,
             notepad.get(1.0, END),
         ]
 
-        file_path = filedialog.asksaveasfile(
+        file_path = filedialog.asksaveasfilename(
             defaultextension=".ccnvs",
             filetypes=[
                 ("Chord Canvas Project","*.ccnvs"),
@@ -654,7 +656,33 @@ class ProjectManager:
         )
 
         if file_path:
-            file_path.write(str(project))
+            pickle.dump(project, open(file_path, "wb"))
+    
+    def load_project(self, timeline_frame):
+        file_path = filedialog.askopenfilename(
+            defaultextension=".ccnvs",
+            filetypes=[
+                ("Chord Canvas Project","*.ccnvs")
+            ]
+        )
+
+        if file_path:
+            project = pickle.load(open(file_path, "rb"))
+
+            for frame in self.chord_frames:
+                frame.destroy()
+            
+            self.timeline = []
+            self.chord_frames = []
+            self.chord_labels = []
+            self.tonic_menu.set(project[0])
+            self.mode_menu.set(project[1])
+            self.time_signature_menu.set(project[2])
+
+            for chord in project[3]:
+                self.append_timeline(timeline_frame, chord)
+            
+            
 
 class App(CTk):
     def __init__(self):
@@ -709,6 +737,7 @@ class App(CTk):
             text="Open",
             fg_color="#ECECED",
             hover_color="#AFB5C7",
+            command=lambda: self.manager.load_project(self.timeline_frame)
         )
         self.open_button.grid(row=2, column=0, padx=16, pady=8)
         self.save_button = CTkButton(
