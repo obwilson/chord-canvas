@@ -512,6 +512,7 @@ class ProjectManager:
             "Major 7th" : "maj7",
             "Minor 7th" : "m7",
             "Minor 7th Flat 5th" : "m7b5",
+            "Diminished" : "dim",
             "Suspended 2nd" : "sus2",
             "Suspended 4th" : "sus4",
             "9th" : "9",
@@ -524,6 +525,7 @@ class ProjectManager:
             "M7" : "Major 7th",
             "m7" : "Minor 7th",
             "m7b5" : "Minor 7th Flat 5th",
+            "dim" : "Diminished",
             "sus2" : "Suspended 2nd",
             "sus4" : "Suspended 4th",
             "9" : "9th",
@@ -658,7 +660,7 @@ class ProjectManager:
         if file_path:
             pickle.dump(project, open(file_path, "wb"))
     
-    def load_project(self, timeline_frame):
+    def load_project(self, timeline_frame, notepad):
         file_path = filedialog.askopenfilename(
             defaultextension=".ccnvs",
             filetypes=[
@@ -677,12 +679,43 @@ class ProjectManager:
             self.chord_labels = []
             self.tonic_menu.set(project[0])
             self.mode_menu.set(project[1])
+            self.set_chords()
             self.time_signature_menu.set(project[2])
+            notepad.delete(1.0, END)
+            notepad.insert(END, project[4])
 
             for chord in project[3]:
                 self.append_timeline(timeline_frame, chord)
             
-            
+    def new_project(self, notepad):
+        prompt = CTkMessagebox(
+            width=176,
+            height=128,
+            button_width=64,
+            button_height=32,
+            title="Create new project?",
+            message="All unsaved changes will be lost.",
+            option_1="Yes",
+            option_2="No",
+            corner_radius=8,
+            border_width=2,
+            font=CTkFont("./assets/Inter.ttf", size=14),
+            icon="./assets/icons/warning.png",
+            border_color="#DFE0E6",
+        )
+
+        if prompt.get() == "Yes":
+            for frame in self.chord_frames:
+                frame.destroy()
+
+            self.timeline = []
+            self.chord_frames = []
+            self.chord_labels = []
+            self.tonic_menu.set(DEFAULT_TONIC)
+            self.mode_menu.set(DEFAULT_MODE)
+            self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
+            self.set_chords()
+            notepad.delete(1.0, END)
 
 class App(CTk):
     def __init__(self):
@@ -728,6 +761,7 @@ class App(CTk):
             text="New",
             fg_color="#ECECED",
             hover_color="#AFB5C7",
+            command=lambda: self.manager.new_project(self.notepad)
         )
         self.new_button.grid(row=1, column=0, padx=16, pady=8)
         self.open_button = CTkButton(
@@ -737,7 +771,7 @@ class App(CTk):
             text="Open",
             fg_color="#ECECED",
             hover_color="#AFB5C7",
-            command=lambda: self.manager.load_project(self.timeline_frame)
+            command=lambda: self.manager.load_project(self.timeline_frame, self.notepad)
         )
         self.open_button.grid(row=2, column=0, padx=16, pady=8)
         self.save_button = CTkButton(
