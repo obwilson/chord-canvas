@@ -9,9 +9,9 @@ Garageband, to continue working with the project.
 
 ## Dependencies
 
-Customtkinter - https://pypi.org/project/customtkinter/
-CTkMessagebox - https://github.com/Akascape/CTkMessagebox
-Pillow - https://pypi.org/project/pillow/
-music21 - https://pypi.org/project/music21/
-pychord - https://pypi.org/project/pychord/
-numpy - https://pypi.org/project/numpy/
+Customtkinter - https://pypi.org/project/customtkinter/  
+CTkMessagebox - https://github.com/Akascape/CTkMessagebox  
+Pillow - https://pypi.org/project/pillow/  
+music21 - https://pypi.org/project/music21/  
+pychord - https://pypi.org/project/pychord/  
+numpy - https://pypi.org/project/numpy/  
