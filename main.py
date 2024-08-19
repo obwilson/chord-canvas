@@ -14,8 +14,8 @@ DEFAULT_TONIC = "C"
 DEFAULT_MODE = "Major"
 DEFAULT_TIME_SIGNATURE = "4/4"
 
-
 class ProjectManager:
+    '''Handles live processes throughout the project using class methods'''
     def __init__(
         self, FONT, palette_menu_bar, chord_button_menu, playback_frame,
         timeline_frame,
@@ -222,7 +222,7 @@ class ProjectManager:
                     ]
                 )
             else:
-                # Append empty chord if invalid (Error prevention)
+                # Append empty chord if invalid
                 chords.append(
                     [len(self.timeline), "", None, self.get_key(), []]
                 )
@@ -270,7 +270,7 @@ class ProjectManager:
                     ]
                 )
             else:
-                # Append empty chord if invalid (Error prevention)
+                # Append empty chord if invalid
                 chords.append(
                     [len(self.timeline), "", None, self.get_key(), []]
                 )
@@ -320,7 +320,7 @@ class ProjectManager:
                     ]
                 )
             else:
-                # Append empty chord if invalid (Error prevention)
+                # Append empty chord if invalid
                 chords.append(
                     [len(self.timeline), "", None, self.get_key(), []]
                 )
@@ -369,7 +369,7 @@ class ProjectManager:
                     ]
                 )
             else:
-                # Append empty chord if invalid (Error prevention)
+                # Append empty chord if invalid
                 chords.append(
                     [len(self.timeline), "", None, self.get_key(), []]
                 )
@@ -428,9 +428,6 @@ class ProjectManager:
         for chord in self.timeline[position::]:
             chord[5] -= 1
         
-        print(self.chord_frames)
-        print(self.timeline)
-        
 
     def reset_timeline(self, timeline_frame):
         ## Reset timeline and frames
@@ -459,7 +456,6 @@ class ProjectManager:
 
     def append_timeline(self, master, chord):
         ## Add frame with chord info into timeline
-        print(self.timeline)
         self.timeline.append(chord)
         self.chord_frames.append(
             CTkFrame(master, width=96, height=64, fg_color="#AFB5C7")
@@ -735,6 +731,7 @@ class ProjectManager:
             notepad.delete(1.0, END)
 
 class App(CTk):
+    '''Tkinter app setup and defines ProjectManager class'''
     def __init__(self):
         super().__init__()
 
