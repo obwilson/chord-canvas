@@ -788,7 +788,9 @@ class App(CTk):
             text="Open",
             fg_color="#ECECED",
             hover_color="#AFB5C7",
-            command=lambda: self.manager.load_project(self.timeline_frame, self.notepad)
+            command=lambda: self.manager.load_project(
+                self.timeline_frame, self.notepad
+            )
         )
         self.open_button.grid(row=2, column=0, padx=16, pady=8)
         self.save_button = CTkButton(
