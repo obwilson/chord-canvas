@@ -1,3 +1,13 @@
+"""
+Chord Canvas allows for easy saving and loading of projects and
+exporting to a MIDI file which allows seamless integration with
+any Digital Audio Workstation, such as Garageband, to continue
+working with the project.
+
+This main file handles all processes of the program, only
+referencing external files and assets.
+"""
+
 from customtkinter import *
 from customtkinter import filedialog
 from CTkMessagebox import *
@@ -14,14 +24,18 @@ DEFAULT_TONIC = "C"
 DEFAULT_MODE = "Major"
 DEFAULT_TIME_SIGNATURE = "4/4"
 
+
 class ProjectManager:
-    '''Handles live processes throughout the project using class methods'''
+    """
+    Handles live processes throughout the project using class methods
+    to quickly get info from other functions in the class
+    """
+
     def __init__(
         self, FONT, palette_menu_bar, chord_button_menu, playback_frame,
         timeline_frame,
     ):
-        # Create menus
-
+        # Create customtkinter selection menus
         self.tonic_menu = CTkOptionMenu(
             palette_menu_bar,
             width=64,
@@ -85,8 +99,7 @@ class ProjectManager:
             height=32,
         )
 
-        # Create buttons
-
+        # Create buttons for the chord selection tab
         self.chord_buttons = {}
         index = 0
         for row in range(4):
@@ -110,7 +123,6 @@ class ProjectManager:
                 index += 1
 
         # Set default values
-
         self.tonic_menu.set(DEFAULT_TONIC)
         self.mode_menu.set(DEFAULT_MODE)
         self.time_signature_menu.set(DEFAULT_TIME_SIGNATURE)
@@ -139,7 +151,10 @@ class ProjectManager:
         return self.time_signature_menu.get()
 
     def get_chords(self):
-        ## Read key and create/validate chords
+        """ Reads key to create and validate chords and then returns a
+        list of all the chords.
+        """
+
         numerals = {
             0: "i",
             1: "ii",
@@ -178,7 +193,8 @@ class ProjectManager:
         chords = []
         index = 0
 
-        # sus2
+        # Create and validate sus2 chords
+
         for num in range(7):
             temp_chord = chord.Chord(
                 roman.RomanNumeral(
@@ -229,7 +245,8 @@ class ProjectManager:
 
             index += 1
 
-        # maj/min
+        # Create and validate maj/min chords
+
         for num in range(7):
             temp_chord = chord.Chord(
                 roman.RomanNumeral(numerals[num], self.get_key(),
@@ -277,7 +294,7 @@ class ProjectManager:
 
             index += 1
 
-        # sus4
+        # Create and validate sus4 chords
         for num in range(7):
             temp_chord = chord.Chord(
                 roman.RomanNumeral(
@@ -327,7 +344,7 @@ class ProjectManager:
 
             index += 1
 
-        # 7
+        # Create and validate 7 chords
         for num in range(7):
             temp_chord = chord.Chord(
                 roman.RomanNumeral(
@@ -379,7 +396,11 @@ class ProjectManager:
         return chords
 
     def set_chords(self):
-        ## Change chord button text and disable if not in key
+        """
+        Recieves chords from key and assigns each one to a button on the
+        button panel. The function will disable any buttons that do not
+        have a valid chord in the context of the key.
+        """
         chords = self.get_chords()
 
         for i in self.chord_buttons:
@@ -395,13 +416,18 @@ class ProjectManager:
                 self.chord_buttons[i[0]].configure(
                     text=i[1], fg_color="#AFB5C7", state="normal"
                 )
+                # If the chord name is longer than 5 characters, the
+                # text size will be adjusted to properly fit the button.
                 if len(i[1]) > 5:
                     self.chord_buttons[i[0]].configure(
                         font=("./assets/Inter.ttf", 11)
                     )
 
     def replace_chord(self, old_chord, root, quality):
-        ## Replace chord in timeline
+        """
+        Takes a chord in the timeline and replaces its slot with a
+        new chord constructed from a root and quality input.
+        """
         chord_name = root + quality
         new_chord = chord.Chord(
             pychord.chord.Chord(chord_name).components()
@@ -419,7 +445,11 @@ class ProjectManager:
         self.chord_labels[old_chord[5]].configure(text=chord_name)
 
     def delete_chord(self, position):
-        ## Delete chord in timeline and adjust indexes of the timeline
+        """
+        Delete a chord at a specified position in the timeline and
+        adjusts the indexes of all the chords after that position
+        to match correctly.
+        """
         self.chord_frames[position].destroy()
         self.timeline.pop(position)
         self.chord_frames.pop(position)
@@ -430,7 +460,10 @@ class ProjectManager:
         
 
     def reset_timeline(self, timeline_frame):
-        ## Reset timeline and frames
+        """
+        Prompts user with a confirmation window and then resets the
+        timeline list, frame, and labels to be empty.
+        """
         prompt = CTkMessagebox(
             width=176,
             height=128,
@@ -455,7 +488,10 @@ class ProjectManager:
             self.chord_labels = []
 
     def append_timeline(self, master, chord):
-        ## Add frame with chord info into timeline
+        """
+        Appends a specified chord to the timeline list and creates a new
+        frame and label to display on the timeline frame.
+        """
         self.timeline.append(chord)
         self.chord_frames.append(
             CTkFrame(master, width=96, height=64, fg_color="#AFB5C7")
@@ -486,7 +522,10 @@ class ProjectManager:
         self.edit_button.grid(padx=8, pady=(0, 8), row=1)
 
     def play_timeline(self, stream, timeline, ts):
-        ## Compile timeline into music21 stream and play using pygame
+        """
+        Compile the timeline into a music21 stream and play it
+        using pygame's realtime midi player.
+        """
         stream.append(meter.TimeSignature(ts))
         for chord in timeline:
             stream.append(chord[2])
@@ -495,7 +534,10 @@ class ProjectManager:
         sp.play()
 
     def export_timeline(self, stream, timeline, ts):
-        ## Compile timeline into music21 stream and export MIDI file
+        """
+        Compile the timeline into music21 stream and then export it
+        MIDI file through a file dialog.
+        """
         stream.append(meter.TimeSignature(ts))
         for chord in timeline:
             stream.append(chord[2])
@@ -512,7 +554,10 @@ class ProjectManager:
         
 
     def chord_window(self, chord):
-        ## Open chord edit window
+        """
+        Opens a window to edit or delete the properties of a specified
+        chord.
+        """
         qualities = {
             "Major" : "",
             "Minor" : "m",
@@ -650,7 +695,11 @@ class ProjectManager:
         confirm_button.grid(padx=0, pady=0, row=1, column=2, sticky="w")
 
     def save_project(self, notepad):
-        ## Compile project into list and encode into binary file
+        """
+        Compile all the project information into a list and then
+        encode the list into a binary file and save it through a
+        file dialog.
+        """
         project = [
             self.get_tonic(),
             self.get_mode(),
@@ -671,7 +720,10 @@ class ProjectManager:
             pickle.dump(project, open(file_path, "wb"))
     
     def load_project(self, timeline_frame, notepad):
-        ## Load .ccnvs binary file and change values according to project list
+        """
+        Load a .ccnvs binary file and change values of the project
+        according to the decompiled list.
+        """
         file_path = filedialog.askopenfilename(
             defaultextension=".ccnvs",
             filetypes=[
@@ -700,7 +752,10 @@ class ProjectManager:
                 self.append_timeline(timeline_frame, chord)
             
     def new_project(self, notepad):
-        ## Ask confirmation then set project to default settings
+        """
+        Prompt confirmation menu and then set project to the
+        default settings.
+        """
         prompt = CTkMessagebox(
             width=176,
             height=128,
@@ -731,7 +786,10 @@ class ProjectManager:
             notepad.delete(1.0, END)
 
 class App(CTk):
-    '''Tkinter app setup and defines ProjectManager class'''
+    """
+    Create the CustomTkinter app and define necessary widgets.
+    Defines the ProjectManager class to handle runtime tasks.
+    """
     def __init__(self):
         super().__init__()
 
@@ -752,7 +810,7 @@ class App(CTk):
             light_image=Image.open("./assets/icons/reset.png"), size=(16, 16)
         )
 
-        # Create Frames
+        # Create base frames
 
         self.sidebar_frame = CTkFrame(self, width=144, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=5, sticky="nsew")
@@ -762,7 +820,7 @@ class App(CTk):
                                sticky="nsew")
         self.center_frame.grid_rowconfigure(1, weight=1)
 
-        # Sidebar
+        # Create sidebar widgets
 
         self.icon_label = CTkLabel(
             self.sidebar_frame, width=64, height=64, text="", image=self.ICON
@@ -815,7 +873,7 @@ class App(CTk):
         )
         self.export_button.grid(row=4, column=0, padx=16, pady=8)
 
-        # Tabs
+        # Create the tabview
 
         self.tabs = CTkTabview(
             self.center_frame, width=576, height=280, fg_color="#ECECED"
@@ -825,7 +883,7 @@ class App(CTk):
         self.tabs.add("Palette")
         self.tabs.add("Notepad")
 
-        # Palette Menu
+        # Create the palette menu frame and widgets
 
         self.palette_menu_bar = CTkFrame(
             self.tabs.tab("Palette"), width=544, height=32, fg_color="#ECECED"
@@ -844,7 +902,7 @@ class App(CTk):
         self.chord_button_menu.grid(row=1, column=0, rowspan=4, columnspan=7,
                                     padx=8)
 
-        # Timeline
+        # Create the timeline frame
 
         self.timeline_frame = CTkScrollableFrame(
             self.center_frame,
@@ -855,7 +913,7 @@ class App(CTk):
         )
         self.timeline_frame.grid(row=2, column=0, padx=14, sticky="ew")
 
-        # Playback
+        # Create playback frame and widgets
 
         self.playback_frame = CTkFrame(
             self.center_frame, width=608, height=48, fg_color="#ECECED"
@@ -906,7 +964,7 @@ class App(CTk):
         self.manager.mode_menu.grid(row=0, column=1, padx=8)
         self.manager.time_signature_menu.grid(row=0, column=6, padx=8, pady=8)
 
-        # Lyrics
+        # Create the notepad textbox
 
         self.notepad = CTkTextbox(
             self.tabs.tab("Notepad"),
